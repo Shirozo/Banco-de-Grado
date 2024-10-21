@@ -3,7 +3,7 @@
         <!-- Brand -->
         <div class="sidenav-header  align-items-center">
             <a class="navbar-brand" href="#">
-                <i class="fa fa-person">Logo</i>
+                <i>Banco de Grado</i>
             </a>
         </div>
         <div class="navbar-inner">
