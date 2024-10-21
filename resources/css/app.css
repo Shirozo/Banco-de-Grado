@@ -1,6 +1,7 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 @import url("../../public/assets/css/bootstrap.css");
 @import url("../../public/assets/css/dataTables.min.css");
+@import url("../../public/assets/css/select2.min.css");
 
 * {
     padding: 0%;
@@ -30,7 +31,7 @@ a {
 .button-34 {
     background: white;
     border-radius: 999px;
-    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-shadow: #069f01 0 10px 20px -10px;
     box-sizing: border-box;
     color: black;
     cursor: pointer;
@@ -50,7 +51,7 @@ a {
     margin-bottom: 2%;
     transition: transform .5s;
     float: right;
-    border: #5603ad 1px solid;
+    border: #009d2f 1px solid;
 }
 
 .button-34:hover {
