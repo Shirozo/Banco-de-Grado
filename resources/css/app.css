@@ -90,3 +90,49 @@ a {
 .errorlist {
     color: red;
 }
+
+.search-user {
+    border-radius: .9em !important;
+    width: 400px !important;
+}
+
+.user-search-container {
+    display: flex;
+}
+
+.search-result {
+    position: absolute;
+    margin-top: 3%;
+    background-color: white;
+    width: 400px;
+    height: fit-content;
+    padding-top: .5%;
+    z-index: 1;
+    border-radius: .3em;
+    align-items: center;
+    flex-direction: column;
+}
+
+.s-active {
+    display: flex !important;
+}
+
+.s-inactive {
+    display: none !important;
+}
+
+.result {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    padding: 2% 2%;
+    border-bottom: solid 1px black;
+}
+
+.result:last-of-type {
+    border-bottom: none;
+}
+
+.result:hover {
+    background-color: rgb(215, 215, 215);
+}
