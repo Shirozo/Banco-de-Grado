@@ -37,7 +37,7 @@
 
 <body class="">
 
-    @include("layouts.sidenav")
+    {{-- @include("layouts.sidenav") --}}
 
     <div class="main-content" id="panel">
 
