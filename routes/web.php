@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,11 @@ Route::group(["prefix" => "grades", "as" => "grade."], function () {
 
 
 Route::group(["prefix" => "user", "as" => "user."], function () {
-    
-    Route::get('/find/id', [UserController::class, "api"])->name("api");
 
+    Route::get('/find/id', [UserController::class, "api"])->name("api");
+});
+
+Route::group(["prefix" => "student", "as" => "student."], function () {
+
+    Route::get("/find/id", [StudentController::class, "api"])->name("api");
 });
