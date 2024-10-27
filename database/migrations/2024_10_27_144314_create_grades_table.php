@@ -17,7 +17,7 @@ return new class extends Migration
             $table->float("first_sem", precision:2)->nullable();
             $table->float("second_sem", precision:2)->nullable();
             $table->foreignId("subject_id")->constrained("subjects")->onDelete("cascade")->onUpdate("cascade");
-            $table->foreignId("student_id")->constrained("users")->onDelete("cascade")->onUpdate("cascade");
+            $table->foreignId("student_id")->constrained("students")->onDelete("cascade")->onUpdate("cascade");
         });
     }
 
