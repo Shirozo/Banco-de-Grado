@@ -34,3 +34,4 @@ Route::group(["prefix" => "student", "as" => "student."], function () {
 
     Route::get("/find/id", [StudentController::class, "api"])->name("api");
 });
+require __DIR__ . '/auth.php';
