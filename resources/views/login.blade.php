@@ -9,7 +9,7 @@
         @yield('title')
     </title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/scss/app.scss'])
 
 </head>
 
@@ -18,42 +18,24 @@
         <div class="nav-title">
             <h1>Banco De Grado</h1>
         </div>
-        <div class="log-in">
-            <a href="#">Log In</a>
-        </div>
     </nav>
-    <div class="main-content">
-        <div class="main-left">
-            <h1>Where Every Grade Tells Your Story</h1>
-        </div>
-        <div class="main-right">
-            <div class="card-container">
-                <div class="card">
-                    <div class="card-title">
-                        <h1>2000</h1>
-                    </div>
-                    <div class="count">
-                        <h3>Story Happening</h3>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">
-                        <h1>140</h1>
-                    </div>
-                    <div class="count">
-                        <h3>Destroyed Story</h3>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-title">
-                        <h1>40</h1>
-                    </div>
-                    <div class="count">
-                        <h3>Story Saved</h3>
-                    </div>
-                </div>
+    <div class="login-main-content">
+        <form class="login-form">
+            <div class="login-title">
+                <h1>LOG IN</h1>
             </div>
-        </div>
+            <div class="form-field">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" placeholder="Enter your username">
+            </div>
+            <div class="form-field">
+                <label for="password">Password:</label>
+                <input type="text" class="form-control" placeholder="Enter your password">
+            </div>
+            <button type="submit" class="form-control form-submit">
+                <span>LOG IN</span>
+            </button>
+        </form>
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
