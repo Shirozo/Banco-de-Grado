@@ -4,23 +4,19 @@
 
 
 @section('main')
-    <div class="header bg-gradient-primary pb-8 pt-5">
+    <div class="header pb-8 pt-5">
         <div class="container-fluid">
             <!-- HTML !-->
             <div class="header-body">
                 <!-- Card stats -->
                 <div class="row">
-                    <div class="col-xl-3 col-lg-6">
+                    <div class="col-xl-2">
                         <div class="card card-stats mb-4 mb-xl-0">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title text-uppercase text-muted mb-0">Subjects</h5>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
-                                            <i class="fa fa-layer-group"></i>
-                                        </div>
+                                        <h5 class="card-title text-uppercase mb-0">Subjects</h5>
+                                        <span class="h2 font-weight-bold mb-0">0</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -30,22 +26,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-6">
+                    <div class="col-xl-2">
                         <div class="card card-stats mb-4 mb-xl-0">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title text-uppercase text-muted mb-0">Enrolled Student</h5>
+                                        <h5 class="card-title text-uppercase  mb-0">Enrolled Student</h5>
                                         <span class="h2 font-weight-bold mb-0">0</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                                            <i class="fas fa-chart-bar"></i>
-                                        </div>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
-                                    <span class="text-danger mr-2"></span>
+                                    <span class="text-success mr-2"></span>
                                     <span class="text-nowrap"></span>
                                 </p>
                             </div>
@@ -63,14 +54,15 @@
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
                         <h3 class="mb-0" style="float: left;">Subjects</h3>
-                        <a onclick="$('#addSubejct').modal('show')" class="button-34">Add New</a>
+                        <a onclick="$('#addSubejct').modal('show')" class="button-34">New Subject</a>
                     </div>
                     <div style="padding: 1%;">
-                        <table id="subjects" class="table table-striped" width="100%">
+                        <table id="subjects" class="table" width="100%">
                             <thead>
                                 <tr>
                                     <th class="th-sm">Subject</th>
                                     <th style="text-align: center">Enrolled Student</th>
+                                    <th>Status</th>
                                     <th class="th-sm" style="width: 30%">Action</th>
                                 </tr>
                             </thead>
