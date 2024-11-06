@@ -21,6 +21,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="icon" href="{{ asset('icon.png') }}">
+    <script src="{{ asset('assets/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.js') }}"></script>
 
 
     <title>
@@ -35,7 +39,7 @@
     
 </head>
 
-<body class="">
+<body class="" style="background-color: #F4F2FF">
 
     {{-- @include("layouts.sidenav") --}}
 
@@ -48,7 +52,6 @@
     </div>
 
     <!-- Specific JS goes HERE -->
-    @vite(['resources/js/app.js'])
 
     @yield('scripts')
 
