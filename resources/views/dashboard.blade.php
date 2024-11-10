@@ -62,7 +62,6 @@
                                 <tr>
                                     <th class="th-sm">Subject</th>
                                     <th style="text-align: center">Enrolled Student</th>
-                                    <th>Status</th>
                                     <th class="th-sm" style="width: 30%">Action</th>
                                 </tr>
                             </thead>
@@ -93,25 +92,30 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Add Subject</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" onclick="$('#addSubejct').modal('hide')">&times;</span>
-                        </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group has-feedback">
                             @error('subject_name')
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
-                            <label for="subject_name">Subject:</label>
+                            <label for="subject_name">Subject Name:</label>
                             <input type="text" name="subject_name" maxlength="50" class="form-control" required=""
-                                id="subject_name">
+                                id="subject_name" placeholder="Enter Subject Name">
+                        </div>
+                        <div class="form-group has-feedback">
+                            @error('sy')
+                                <span class="text-danger"> {{ $message }} </span>
+                            @enderror
+                            <label for="subject_name">School Year:</label>
+                            <input type="text" name="sy" maxlength="50" class="form-control" required=""
+                                id="sy" placeholder="Enter School Year">
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger btn-flat pull-left"
-                            onclick="$('#addSubejct').modal('hide')"><i class="fa fa-close"></i> Close</button>
-                        <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i>
+                    <div class="modal-footer custom-footer">
+                        <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i class="fa fa-save"></i>
                             Save</button>
+                        <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
+                            onclick="$('#addSubejct').modal('hide')"><i class="fa fa-close"></i> Close</button>
                     </div>
                 </div>
             </form>
