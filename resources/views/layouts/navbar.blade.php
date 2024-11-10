@@ -8,7 +8,7 @@
                 <input class="form-control user-search" id="search-for-student"
                     placeholder="Enter Student-ID or Name">
             </div>
-            <div class="search-result s-inactive">
+            <div class="search-result s-inactive" id="search-result">
                 <h4 class="no-result">Type 1 or more characters</h4>
             </div>
         </div>
@@ -23,7 +23,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const $input = $('#search-for-student');
-        const $searchResult = $('.search-result');
+        const $searchResult = $('#search-result');
 
         $input.on('focus', function() {
             $searchResult.addClass('s-active');
