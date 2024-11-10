@@ -8,6 +8,17 @@
     src: url("../../public/assets/fonts/Kadwa-Bold.ttf");
 }
 
+@font-face {
+    font-family: "Kanit";
+    src: url("../../public/assets/fonts/Kanit-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Kanit-Thin";
+    src: url("../../public/assets/fonts/Kanit-Thin.ttf");
+}
+
+
 * {
     padding: 0%;
     margin: 0%;
@@ -111,6 +122,49 @@ a {
 .fa-user {
     color: white;
     cursor: pointer;
+}
+
+.btn-add {
+    background-color: #8667ED !important;
+    border: 1px solid #8667ED !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19);
+}
+
+.btn-close-c {
+    background-color: white !important;
+    border: solid 1px black !important;
+    color: black !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.btn-add ,  .btn-close-c {
+    width: 30% !important;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: center !important;
+}
+
+.modal-title, .form-group > label {
+    font-family: "Kanit" !important;
+    font-weight: normal;
+    font-size: 25px !important;
+}
+
+.form-group > label {
+    font-size: 18px !important;
+    color: black;
+}
+
+.custom-footer {
+    flex-direction: column;
+    margin-top: -50px;
+}
+
+.custom-footer > button {
+    width: 100% !important;
 }
   
 
