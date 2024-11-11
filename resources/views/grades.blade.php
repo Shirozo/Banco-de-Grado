@@ -112,12 +112,49 @@
                                     <th style="text-align: center">First Semester</th>
                                     <th style="text-align: center">Second Semester</th>
                                     <th style="text-align: center">Final Grade</th>
-                                    <th>Status</th>
-                                    <th class="th-sm" style="width: 30%">Action</th>
+                                    <th style="text-align: center">Remark</th>
+                                    <th style="text-align: center">Status</th>
+                                    <th style="text-align: center; width: 15%!important" class="th-sm w-25"
+                                        style="width: 30%">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-
+                                @foreach ($data as $d)
+                                    @php
+                                        $average =
+                                            ($d->first_sem + $d->second_sem) / 2
+                                                ? ($d->first_sem + $d->second_sem) / 2
+                                                : 'N/A';
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $d->last_name }}, {{ $d->first_name }}</td>
+                                        <td style="text-align: center">{{ $d->first_sem ? $d->first_sem : 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $d->second_sem ? $d->first_sem : 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $average }}</td>
+                                        <td style="text-align: center">{{ $d->second_sem ? $d->first_sem : 'N/A' }}</td>
+                                        <td style="text-align: center">
+                                            @if ($average == 'N/A')
+                                                N/A
+                                            @elseif ($average > 3)
+                                                <b class="remark failing">FAILED</b>
+                                            @else
+                                                <b class="remark passing">PASSED</b>
+                                            @endif
+                                        </td>
+                                        <td style="text-align: center">
+                                            <a href="#updateStudent" class="btn btn-sm btn-flat btn-user-data"
+                                                onclick="$('#updateStudent').modal('show')">
+                                                <i class="fa fa-gear" style="color:  white !important"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-flat btn-user-view">
+                                                <i class="fa fa-eye" style="color:  white !important"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-flat btn-danger">
+                                                <i class="fa fa-trash" style="color:  white !important"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -157,52 +194,58 @@
         </div>
     </div>
 
-    <div class="modal fade" id="updateSubejct">
+    <div class="modal fade" id="updateStudent">
         <div class="modal-dialog" role="document">
             <form action="{{ route('subject.update') }}" method="POST">
                 @csrf
                 @method('put')
                 <div class="modal-content">
-                    <div class="form-group has-feedback">
-                        @error('fullname')
-                            <span class="text-danger"> {{ $message }} </span>
-                        @enderror
-                        <label for="fullname">Fullname:</label>
-                        <select name="fullname" maxlength="50" class="form-control" required id="fullname">
-                        </select>
+                    <div class="modal-header">
+                        <h5 class="modal-title">NEW STUDENT</h5>
                     </div>
-                    <div class="form-group has-feedback">
-                        @error('status')
-                            <span class="text-danger"> {{ $message }} </span>
-                        @enderror
-                        <label for="status">Student ID:</label>
-                        <select name="status" maxlength="50" class="form-control" required id="status">
-                        </select>
+                    <div class="modal-body">
+                        <div class="form-group has-feedback">
+                            @error('fullname')
+                                <span class="text-danger"> {{ $message }} </span>
+                            @enderror
+                            <label for="fullname">Fullname:</label>
+                            <input name="fullname" maxlength="50" disabled readonly class="form-control" required id="fullname">
+                        </div>
+                        <div class="form-group has-feedback">
+                            @error('status')
+                                <span class="text-danger"> {{ $message }} </span>
+                            @enderror
+                            <label for="status">Status:</label>
+                            <select name="status" maxlength="50" class="form-control" required id="status">
+                                <option value="1">Active</option>
+                                <option value="1">Dropped</option>
+                            </select>
+                        </div>
+                        <div class="form-group has-feedback">
+                            @error('first_sem')
+                                <span class="text-danger"> {{ $message }} </span>
+                            @enderror
+                            <label for="first_sem">First Semester:</label>
+                            <select name="first_sem" maxlength="50" class="form-control" required id="first_sem">
+                            </select>
+                        </div>
+                        <div class="form-group has-feedback">
+                            @error('second_sem')
+                                <span class="text-danger"> {{ $message }} </span>
+                            @enderror
+                            <label for="second_sem">Second Semester:</label>
+                            <select name="second_sem" maxlength="50" class="form-control" required id="second_sem">
+                            </select>
+                        </div>
+                        <input type="hidden" name="subject_id" id="edit_subject_id" value="{{ $id }}">
                     </div>
-                    <div class="form-group has-feedback">
-                        @error('first_sem')
-                            <span class="text-danger"> {{ $message }} </span>
-                        @enderror
-                        <label for="first_sem">Fullname / Student ID:</label>
-                        <select name="first_sem" maxlength="50" class="form-control" required id="first_sem">
-                        </select>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
+                                class="fa fa-plus"></i>
+                            UPDATE</button>
+                        <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
+                            onclick="$('#updateStudent').modal('hide')"><i class="fa fa-close"></i> Close</button>
                     </div>
-                    <div class="form-group has-feedback">
-                        @error('second_sem')
-                            <span class="text-danger"> {{ $message }} </span>
-                        @enderror
-                        <label for="second_sem">Fullname / Student ID:</label>
-                        <select name="second_sem" maxlength="50" class="form-control" required id="second_sem">
-                        </select>
-                    </div>
-                    <input type="hidden" name="subject_id" id="edit_subject_id" value="{{ $id }}">
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
-                            class="fa fa-plus"></i>
-                        ADD</button>
-                    <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
-                        onclick="$('#addStudent').modal('hide')"><i class="fa fa-close"></i> Close</button>
                 </div>
             </form>
         </div>
