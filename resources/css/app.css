@@ -112,10 +112,11 @@ a {
     right: 0px;
     border-width: 10px;
     border-style: solid;
-    border-color: transparent transparent transparent #fff; /* Pointer color matches bubble */
-  }
+    border-color: transparent transparent transparent #fff;
+    /* Pointer color matches bubble */
+}
 
-#user-nav-action > a {
+#user-nav-action>a {
     padding: 1% 1%;
 }
 
@@ -138,7 +139,33 @@ a {
 
 }
 
-.btn-add ,  .btn-close-c {
+.btn-user-data {
+    background-color: #EC7237 !important;
+}
+
+.btn-user-view {
+    background-color: #8467ED !important;
+}
+
+.remark {
+    width: 40px !important;
+    padding: 3% 15%;
+    border-radius: 999px;
+    color: white;
+    font-family: "Kanit";
+}
+
+.passing {
+    background-color: green;
+}
+
+.failing {
+    background-color: red;
+}
+
+
+.btn-add,
+.btn-close-c {
     width: 30% !important;
 }
 
@@ -147,13 +174,14 @@ a {
     justify-content: center !important;
 }
 
-.modal-title, .form-group > label {
+.modal-title,
+.form-group>label {
     font-family: "Kanit" !important;
     font-weight: normal;
     font-size: 25px !important;
 }
 
-.form-group > label {
+.form-group>label {
     font-size: 18px !important;
     color: black;
 }
@@ -163,10 +191,10 @@ a {
     margin-top: -50px;
 }
 
-.custom-footer > button {
+.custom-footer>button {
     width: 100% !important;
 }
-  
+
 
 .nav-right {
     display: flex;
@@ -204,7 +232,7 @@ a {
     transform: scale(1.1);
 }
 
-table > tbody > tr {
+table>tbody>tr {
     background-color: white !important;
     padding: 2% 2% !important;
 }
