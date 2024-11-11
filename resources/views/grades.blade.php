@@ -143,7 +143,7 @@
                                         </td>
                                         <td style="text-align: center">
                                             <a href="#updateStudent" class="btn btn-sm btn-flat btn-user-data"
-                                                onclick="$('#updateStudent').modal('show')">
+                                                onclick="$('#updateStudent').modal('show')" data-id="{{ $d->student_id }}">
                                                 <i class="fa fa-gear" style="color:  white !important"></i>
                                             </a>
                                             <button class="btn btn-sm btn-flat btn-user-view">
@@ -209,7 +209,8 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="fullname">Fullname:</label>
-                            <input name="fullname" maxlength="50" disabled readonly class="form-control" required id="fullname">
+                            <input name="fullname" maxlength="50" disabled readonly class="form-control" required
+                                id="fullname">
                         </div>
                         <div class="form-group has-feedback">
                             @error('status')
@@ -217,8 +218,8 @@
                             @enderror
                             <label for="status">Status:</label>
                             <select name="status" maxlength="50" class="form-control" required id="status">
-                                <option value="1">Active</option>
-                                <option value="1">Dropped</option>
+                                <option value="active">Active</option>
+                                <option value="dropped">Dropped</option>
                             </select>
                         </div>
                         <div class="form-group has-feedback">
@@ -226,18 +227,15 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="first_sem">First Semester:</label>
-                            <select name="first_sem" maxlength="50" class="form-control" required id="first_sem">
-                            </select>
+                            <input name="first_sem" maxlength="50" class="form-control" required id="first_sem">
                         </div>
                         <div class="form-group has-feedback">
                             @error('second_sem')
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="second_sem">Second Semester:</label>
-                            <select name="second_sem" maxlength="50" class="form-control" required id="second_sem">
-                            </select>
+                            <input name="second_sem" maxlength="50" class="form-control" required id="second_sem">
                         </div>
-                        <input type="hidden" name="subject_id" id="edit_subject_id" value="{{ $id }}">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
@@ -300,6 +298,25 @@
                 id = $(this).data('id')
                 $("#delete_id").val(id)
                 $('#deleteSubejct').modal('show')
+            })
+
+            $(".btn-user-data").on("click", function() {
+                
+                id = $(this).data('id')
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('grade.api') }}",
+                    dataType: "json",
+                    data: {
+                        id: id,
+                        s_id : "{{ $id }}"
+                    },
+                    success: function(response) {
+                        $("#fullname").val(response.first_name + " " + response.middle_name + " " + response.last_name)
+                        $("#first_sem").val(response.first_sem ? response.first_sem : 0);
+                        $("#second_sem").val(response.second_sem ? response.second_sem : 0);
+                    }
+                })
             })
 
             $("#student_id").select2({
