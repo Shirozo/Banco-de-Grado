@@ -22,6 +22,8 @@ Route::group(["prefix" => "grades", "as" => "grade."], function () {
     Route::get("/view/subject/id={id}", [GradeController::class, "show"])->name("show");
 
     Route::post("/enroll/student", [GradeController::class, "store"])->name("store");
+
+    Route::get("/find/id", [GradeController::class, "api"])->name("api");
 });
 
 
