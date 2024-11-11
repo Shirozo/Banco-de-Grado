@@ -68,7 +68,7 @@
                                 `<h4 class="result" onclick="studentData()">${data[i].name}</h4>`                      
                         }
                     }
-                    $(".search-result").html(result_html)
+                    $("#search-result").html(result_html)
                 }
             })
         });
