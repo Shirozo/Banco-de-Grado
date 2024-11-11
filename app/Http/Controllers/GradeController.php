@@ -4,15 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Grade;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Termwind\Components\Raw;
 
 class GradeController extends Controller
 {
 
     public function show($id, Request $request)
-    {  
+    {
+
+        $data = DB::table("grades")
+                    ->select(DB::raw("
+                        grades.first_sem,
+                        grades.second_sem,
+                        grades.id, 
+                        grades.status, 
+                        students.first_name, 
+                        students.last_name,
+                        students.middle_name
+                    "))
+                    ->join("students", "grades.student_id", "=", "students.id")
+                    ->where("grades.subject_id", "=", $id)
+                    ->get();
         return view("grades", [
-            "id" => $id
+            "id" => $id,
+            "data" => $data
         ]);
     }
 
