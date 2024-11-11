@@ -20,6 +20,7 @@ class GradeController extends Controller
                         grades.second_sem,
                         grades.id, 
                         grades.status, 
+                        grades.student_id, 
                         students.first_name, 
                         students.last_name,
                         students.middle_name
@@ -53,5 +54,35 @@ class GradeController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function api(Request $request) {
+        if ($request->has("id") && $request->has("s_id")) {
+            $data = DB::table("grades")
+                        ->select(DB::raw("
+                            grades.first_sem,
+                            grades.second_sem,
+                            grades.id, 
+                            grades.status, 
+                            students.first_name, 
+                            students.last_name,
+                            students.middle_name
+                        "))
+                    ->join("students", "grades.student_id", "=", "students.id")
+                    ->where([
+                        ["grades.subject_id", "=", $request->s_id],
+                        ["grades.student_id", "=", $request->id]
+                    ])->first();
+            
+            if ($data != null) {
+               return response()->json($data, 200); 
+            }
+            return response()->json([
+                "message" => "Can't Find the data!"
+            ]);
+        }
+        return response()->json([
+            "message" => "Invalid Parameters"
+        ], 404);
     }
 }
