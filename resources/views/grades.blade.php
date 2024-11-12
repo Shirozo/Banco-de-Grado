@@ -129,18 +129,18 @@
                                     <tr>
                                         <td>{{ $d->last_name }}, {{ $d->first_name }}</td>
                                         <td style="text-align: center">{{ $d->first_sem ? $d->first_sem : 'N/A' }}</td>
-                                        <td style="text-align: center">{{ $d->second_sem ? $d->first_sem : 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $d->second_sem ? $d->second_sem : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $average }}</td>
-                                        <td style="text-align: center">{{ $d->second_sem ? $d->first_sem : 'N/A' }}</td>
                                         <td style="text-align: center">
                                             @if ($average == 'N/A')
-                                                N/A
+                                            N/A
                                             @elseif ($average > 3)
-                                                <b class="remark failing">FAILED</b>
+                                            <b class="remark failing">FAILED</b>
                                             @else
-                                                <b class="remark passing">PASSED</b>
+                                            <b class="remark passing">PASSED</b>
                                             @endif
                                         </td>
+                                        <td style="text-align: center">{{ $d->status }}</td>
                                         <td style="text-align: center">
                                             <a href="#updateStudent" class="btn btn-sm btn-flat btn-user-data"
                                                 onclick="$('#updateStudent').modal('show')" data-id="{{ $d->student_id }}">
@@ -196,7 +196,7 @@
 
     <div class="modal fade" id="updateStudent">
         <div class="modal-dialog" role="document">
-            <form action="{{ route('subject.update') }}" method="POST">
+            <form action="{{ route('subject.update') }}" method="POST" id="update_form">
                 @csrf
                 @method('put')
                 <div class="modal-content">
@@ -236,6 +236,7 @@
                             <label for="second_sem">Second Semester:</label>
                             <input name="second_sem" maxlength="50" class="form-control" required id="second_sem">
                         </div>
+                        <input type="hidden" name="grade_id" id="grade_id">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
@@ -315,6 +316,36 @@
                         $("#fullname").val(response.first_name + " " + response.middle_name + " " + response.last_name)
                         $("#first_sem").val(response.first_sem ? response.first_sem : 0);
                         $("#second_sem").val(response.second_sem ? response.second_sem : 0);
+                        $("#grade_id").val(response.id)
+                    }
+                })
+            })
+
+            $("#update_form").on("submit", (e) => {
+                e.preventDefault();
+                first_sem = $("#first_sem").val()
+                second_sem = $("#second_sem").val()
+                status = $("#status").val()
+                g_id = $("#grade_id").val()                
+                fullname = $("#fullname").val()                
+                $.ajax({
+                    type : "PUT",
+                    url : "{{ route('grade.update') }}",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        fullname : fullname,
+                        grade_id : g_id,
+                        status : status,
+                        first_sem : first_sem,
+                        second_sem : second_sem
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        window.location.reload()
+                    },
+                    error: function(errr) {
+                        console.log(errr.responseJSON);
+                        
                     }
                 })
             })
