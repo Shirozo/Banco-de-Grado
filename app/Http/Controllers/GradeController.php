@@ -15,7 +15,7 @@ class GradeController extends Controller
     {
 
         $data = DB::table("grades")
-                    ->select(DB::raw("
+            ->select(DB::raw("
                         grades.first_sem,
                         grades.second_sem,
                         grades.id, 
@@ -25,9 +25,9 @@ class GradeController extends Controller
                         students.last_name,
                         students.middle_name
                     "))
-                    ->join("students", "grades.student_id", "=", "students.id")
-                    ->where("grades.subject_id", "=", $id)
-                    ->get();
+            ->join("students", "grades.student_id", "=", "students.id")
+            ->where("grades.subject_id", "=", $id)
+            ->get();
         return view("grades", [
             "id" => $id,
             "data" => $data
@@ -47,7 +47,7 @@ class GradeController extends Controller
             //Add a va;idation error message
             return redirect()->back();
         }
-        
+
         Grade::create([
             "student_id" => $request->student_id,
             "subject_id" => $request->subject_id
@@ -56,10 +56,55 @@ class GradeController extends Controller
         return redirect()->back();
     }
 
-    public function api(Request $request) {
+    public function update(Request $request)
+    {
+        try {
+            if (!$request->has("grade_id")) {
+                return response()->json([
+                    "message" => "User ID is required!"
+                ], 403);
+            }
+
+            $validation = Validator::make($request->all(), [
+                "fullname" => "required",
+                "status" => "required",
+                "first_sem" => "required|numeric|min:0",
+                "second_sem" => "required|numeric|min:0"
+            ]);
+
+
+            if ($validation->fails()) {
+                return response()->json([
+                    "message" => "Form Validation Fails!"
+                ], 403);
+            }
+
+            $first_sem = $request->first_sem == 0 ? null : $request->first_sem;
+            $second_sem = $request->second_sem == 0 ? null : $request->second_sem;
+
+            $data = Grade::find($request->grade_id);
+
+            $data->update([
+                "status" => $request->status,
+                "first_sem" => $first_sem,
+                "second_sem" => $second_sem
+            ]);
+
+            return response()->json([
+                "message" => "Updated Success!"
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "message" => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function api(Request $request)
+    {
         if ($request->has("id") && $request->has("s_id")) {
             $data = DB::table("grades")
-                        ->select(DB::raw("
+                ->select(DB::raw("
                             grades.first_sem,
                             grades.second_sem,
                             grades.id, 
@@ -68,14 +113,14 @@ class GradeController extends Controller
                             students.last_name,
                             students.middle_name
                         "))
-                    ->join("students", "grades.student_id", "=", "students.id")
-                    ->where([
-                        ["grades.subject_id", "=", $request->s_id],
-                        ["grades.student_id", "=", $request->id]
-                    ])->first();
-            
+                ->join("students", "grades.student_id", "=", "students.id")
+                ->where([
+                    ["grades.subject_id", "=", $request->s_id],
+                    ["grades.student_id", "=", $request->id]
+                ])->first();
+
             if ($data != null) {
-               return response()->json($data, 200); 
+                return response()->json($data, 200);
             }
             return response()->json([
                 "message" => "Can't Find the data!"
