@@ -23,6 +23,8 @@ Route::group(["prefix" => "grades", "as" => "grade."], function () {
 
     Route::post("/enroll/student", [GradeController::class, "store"])->name("store");
 
+    Route::put('/grades/update', [GradeController::class, "update"])->name("update");
+
     Route::get("/find/id", [GradeController::class, "api"])->name("api");
 });
 
