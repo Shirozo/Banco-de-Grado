@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard')
 
-@section("back")
+@section('back')
     <a href="{{ route('subject.show') }}" class="fa fa-arrow-left fa-xl"></a>
 @endsection
 
@@ -19,7 +19,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title text-uppercase mb-0">Enrolled Student</h5>
-                                        <span class="h2 font-weight-bold mb-0">0</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ $data->count() }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -35,7 +35,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title passed text-uppercase mb-0">Passed</h5>
-                                        <span class="h2 font-weight-bold mb-0">0</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ $passed }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -51,7 +51,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title failed text-uppercase mb-0">Failed</h5>
-                                        <span class="h2 font-weight-bold mb-0">0</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ $failed }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -67,7 +67,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title no-grade text-uppercase mb-0">No Grade</h5>
-                                        <span class="h2 font-weight-bold mb-0">0</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ $no_grades }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -83,7 +83,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title text-muted text-uppercase mb-0">Dropped</h5>
-                                        <span class="h2 font-weight-bold mb-0">0</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ $dropped }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -104,7 +104,7 @@
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
-                        <h3 class="mb-0" style="float: left;">Subjects</h3>
+                        <h3 class="mb-0" style="float: left;">{{ $subject->subject_name }}</h3>
                         <a onclick="$('#addStudent').modal('show')" class="button-34">Add Student</a>
                     </div>
                     <div style="padding: 1%;">
@@ -124,10 +124,14 @@
                             <tbody>
                                 @foreach ($data as $d)
                                     @php
-                                        $average =
-                                            ($d->first_sem + $d->second_sem) / 2
-                                                ? ($d->first_sem + $d->second_sem) / 2
-                                                : 'N/A';
+                                        if ($d->first_sem && $d->last_sem) {
+                                            $average =
+                                                ($d->first_sem + $d->second_sem) / 2
+                                                    ? ($d->first_sem + $d->second_sem) / 2
+                                                    : 'N/A';
+                                        } else {
+                                            $average = 'N/A';
+                                        }
                                     @endphp
                                     <tr>
                                         <td>{{ $d->last_name }}, {{ $d->first_name }}</td>
@@ -135,26 +139,30 @@
                                         <td style="text-align: center">{{ $d->second_sem ? $d->second_sem : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $average }}</td>
                                         <td style="text-align: center">
-                                            @if ($average == 'N/A')
-                                            N/A
-                                            @elseif ($average > 3)
-                                            <b class="remark failing">FAILED</b>
+                                            @if (!$d->first_sem || !$d->second_sem)
+                                                <b class="remark no_grade">NO GRADE</b>
                                             @else
-                                            <b class="remark passing">PASSED</b>
+                                                @if ($average == 'N/A')
+                                                    N/A
+                                                @elseif ($average > 3)
+                                                    <b class="remark failing">FAILED</b>
+                                                @else
+                                                    <b class="remark passing">PASSED</b>
+                                                @endif
                                             @endif
                                         </td>
                                         <td style="text-align: center">{{ $d->status }}</td>
                                         <td style="text-align: center">
                                             <a href="#updateStudent" class="btn btn-sm btn-flat btn-user-data"
-                                                onclick="$('#updateStudent').modal('show')" data-id="{{ $d->student_id }}">
+                                                data-id="{{ $d->student_id }}">
                                                 <i class="fa fa-gear" style="color:  white !important"></i>
                                             </a>
                                             <button class="btn btn-sm btn-flat btn-user-view">
                                                 <i class="fa fa-eye" style="color:  white !important"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-flat btn-danger">
+                                            <a class="btn btn-sm btn-flat btn-danger delete" data-id="{{ $d->id }}">
                                                 <i class="fa fa-trash" style="color:  white !important"></i>
-                                            </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -183,7 +191,7 @@
                             <select name="student_id" maxlength="50" class="form-control" required id="student_id">
                             </select>
                         </div>
-                        <input type="hidden" name="subject_id" id="subject_id" value="{{ $id }}">
+                        <input type="hidden" name="subject_id" id="subject_id" value="{{ $subject->id }}">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
@@ -212,8 +220,7 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="fullname">Fullname:</label>
-                            <input name="fullname" maxlength="50" readonly class="form-control" required
-                                id="fullname">
+                            <input name="fullname" maxlength="50" readonly class="form-control" required id="fullname">
                         </div>
                         <div class="form-group has-feedback">
                             @error('status')
@@ -254,27 +261,25 @@
     </div>
 
 
-    <div class="modal fade" id="deleteSubejct">
+    <div class="modal fade" id="deleteGrade">
         <div class="modal-dialog" role="document">
-            <form action="{{ route('subject.destroy') }}" method="POST">
+            <form action="{{ route('grade.destroy') }}" method="POST">
                 @csrf
                 @method('delete')
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Delete Subject</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" onclick="$('#deleteSubejct').modal('hide')">&times;</span>
-                        </button>
+                        <h5 class="modal-title">DELETE STUDENT DATA</h5>
                     </div>
                     <div class="modal-body">
-                        <h2>Are you sure you want to delete this subject?</h2>
+                        <h2>ARE YOU SURE YOU WANT TO DELETE THIS STUDENT DATA?</h2>
                         <input type="hidden" name="delete_id" id="delete_id">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success btn-flat pull-left"
-                            onclick="$('#deleteSubejct').modal('hide')"><i class="fa fa-close"></i> Close</button>
-                        <button type="submit" class="btn btn-danger btn-flat" name="add"><i class="fa fa-save"></i>
-                            Delete</button>
+                    <div class="modal-footer custom-footer" style="margin-top: 10px">
+                        <button type="submit" class="btn btn-danger btn-flat" name="add"
+                            style="background-color: red">
+                            DELETE</button>
+                        <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
+                            onclick="$('#deleteGrade').modal('hide')"><i class="fa fa-close"></i> Close</button>
                     </div>
                 </div>
             </form>
@@ -292,11 +297,11 @@
             $('.delete').on('click', function() {
                 id = $(this).data('id')
                 $("#delete_id").val(id)
-                $('#deleteSubejct').modal('show')
+                $('#deleteGrade').modal('show')
             })
 
             $(".btn-user-data").on("click", function() {
-                
+
                 id = $(this).data('id')
                 $.ajax({
                     type: "GET",
@@ -304,14 +309,16 @@
                     dataType: "json",
                     data: {
                         id: id,
-                        s_id : "{{ $id }}"
+                        s_id: "{{ $subject->id }}"
                     },
                     success: function(response) {
-                        $("#fullname").val(response.first_name + " " + response.middle_name + " " + response.last_name)
+                        $("#fullname").val(response.first_name + " " + response.middle_name +
+                            " " + response.last_name)
                         $("#first_sem").val(response.first_sem ? response.first_sem : 0);
                         $("#second_sem").val(response.second_sem ? response.second_sem : 0);
                         $("#grade_id").val(response.id)
                         $("#status").val(response.status)
+                        $('#updateStudent').modal('show')
                     }
                 })
             })
@@ -321,20 +328,20 @@
                 first_sem = $("#first_sem").val()
                 second_sem = $("#second_sem").val()
                 status = $("#status").val()
-                g_id = $("#grade_id").val()                
-                fullname = $("#fullname").val()      
+                g_id = $("#grade_id").val()
+                fullname = $("#fullname").val()
                 console.log(status);
-                          
+
                 $.ajax({
-                    type : "PUT",
-                    url : "{{ route('grade.update') }}",
+                    type: "PUT",
+                    url: "{{ route('grade.update') }}",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        fullname : fullname,
-                        grade_id : g_id,
-                        status : status,
-                        first_sem : first_sem,
-                        second_sem : second_sem
+                        fullname: fullname,
+                        grade_id: g_id,
+                        status: status,
+                        first_sem: first_sem,
+                        second_sem: second_sem
                     },
                     success: function(response) {
                         console.log(response);
@@ -342,7 +349,7 @@
                     },
                     error: function(errr) {
                         console.log(errr.responseJSON);
-                        
+
                     }
                 })
             })
