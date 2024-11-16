@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grade;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -28,9 +29,44 @@ class GradeController extends Controller
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
             ->get();
+
+        $subject = Subject::find($id);
+
+        $baseQuery = DB::table("grades")
+            ->join("students", "grades.student_id", "=", "students.id")
+            ->where("grades.subject_id", "=", $id)
+            ->whereRaw("status = 'active'");
+
+        $passed = $baseQuery->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
+            ->whereRaw("((grades.first_sem + grades.second_sem) / 2) BETWEEN 1 AND 3")
+            ->count();
+
+        $failed = $baseQuery->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
+            ->whereRaw("((grades.first_sem + grades.second_sem) / 2) > 3")
+            ->count();
+
+        $no_grades = DB::table("grades")
+            ->join("students", "grades.student_id", "=", "students.id")
+            ->where("grades.subject_id", "=", $id)
+            ->whereRaw("status = 'active'")
+            ->whereRaw("grades.first_sem IS NULL OR grades.second_sem IS NULL")
+            ->count();
+
+        $dropped = DB::table("grades")
+            ->join("students", "grades.student_id", "=", "students.id")
+            ->where("grades.subject_id", "=", $id)
+            ->whereRaw("status = 'dropped'")
+            ->count();
+
+
+
         return view("grades", [
-            "id" => $id,
-            "data" => $data
+            "subject" => $subject,
+            "data" => $data,
+            "passed" => $passed,
+            "failed" => $failed,
+            "no_grades" => $no_grades,
+            "dropped" => $dropped
         ]);
     }
 
@@ -65,11 +101,19 @@ class GradeController extends Controller
                 ], 403);
             }
 
+            if (($request->first_sem >= .1 && $request->first_sem < 1) ||
+                ($request->second_sem >= .1 && $request->second_sem < 1)
+            ) {
+                return response()->json([
+                    "message" => "Invalid Grade Input!"
+                ], 403);
+            }
+
             $validation = Validator::make($request->all(), [
                 "fullname" => "required",
                 "status" => "required",
-                "first_sem" => "required|numeric|min:0",
-                "second_sem" => "required|numeric|min:0"
+                "first_sem" => "required|numeric",
+                "second_sem" => "required|numeric"
             ]);
 
             if ($validation->fails()) {
@@ -82,7 +126,7 @@ class GradeController extends Controller
             $second_sem = $request->second_sem == 0 ? null : $request->second_sem;
 
             $data = Grade::find($request->grade_id);
-            
+
             $data->update([
                 "status" => $request->status,
                 "first_sem" => $first_sem,
@@ -93,6 +137,34 @@ class GradeController extends Controller
             return response()->json([
                 "message" => "Updated Success!"
             ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "message" => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+            if (!$request->has("delete_id")) {
+                return response()->json([
+                    "message" => "User ID is required!"
+                ], 403);
+            }
+
+            $data = Grade::find($request->delete_id);
+
+            if ($data != null) {
+                $data->delete();
+                return response()->json([
+                    "message" => "Deleted Success!"
+                ], 200);
+            }
+
+            return response()->json([
+                "message" => "Carnt Find User"
+            ], 403);
         } catch (\Throwable $th) {
             return response()->json([
                 "message" => $th->getMessage()
