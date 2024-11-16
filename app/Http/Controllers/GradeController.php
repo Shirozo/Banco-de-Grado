@@ -72,7 +72,6 @@ class GradeController extends Controller
                 "second_sem" => "required|numeric|min:0"
             ]);
 
-
             if ($validation->fails()) {
                 return response()->json([
                     "message" => "Form Validation Fails!"
@@ -83,11 +82,12 @@ class GradeController extends Controller
             $second_sem = $request->second_sem == 0 ? null : $request->second_sem;
 
             $data = Grade::find($request->grade_id);
-
+            
             $data->update([
                 "status" => $request->status,
                 "first_sem" => $first_sem,
-                "second_sem" => $second_sem
+                "second_sem" => $second_sem,
+                "status" => $request->status
             ]);
 
             return response()->json([
