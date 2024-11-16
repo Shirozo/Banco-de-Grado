@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->char("subject_name", 50);
+            $table->char("school_year", 9);
             $table->char("instructor_name", 50)->nullable();
         });
     }
