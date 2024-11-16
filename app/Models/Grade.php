@@ -12,6 +12,7 @@ class Grade extends Model
         "student_id",
         "subject_id",
         "first_sem",
-        "second_sem"
+        "second_sem",
+        "status"
     ];
 }
