@@ -42,6 +42,7 @@ a {
 .nav-title>h1 {
     color: white;
     font-family: "Kadwa";
+    height: 70%;
 }
 
 .login-main-content {
@@ -64,6 +65,10 @@ a {
     border: #8467ED solid 1px;
     border-radius: 16px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19);
+}
+
+.fa-arrow-left {
+    color: white;
 }
 
 .login-title {
@@ -162,6 +167,14 @@ a {
 .failing {
     background-color: red;
 }
+
+.nav-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
 
 
 .btn-add,
