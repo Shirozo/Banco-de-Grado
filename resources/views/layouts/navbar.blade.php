@@ -1,5 +1,6 @@
 <nav class="navbar-main">
-    <div class="nav-title">
+    <div class="nav-title nav-nav">
+        @yield('back')
         <h1>Banco De Grado</h1>
     </div>
     <div class="nav-right">
