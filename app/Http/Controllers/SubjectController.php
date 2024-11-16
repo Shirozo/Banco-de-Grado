@@ -23,6 +23,7 @@ class SubjectController extends Controller
     {
         $validate = Validator::make($request->all(), [
             "subject_name" => "required|max:50",
+            "sy" => "required|max:9|min:9"
         ]);
 
 
@@ -33,15 +34,14 @@ class SubjectController extends Controller
 
         $subject = Subject::create([
             "subject_name" => $request->subject_name,
+            "school_year" => $request->sy
         ]);
 
-        if ($subject) {
-            return redirect()->route("subject.index");
-        }
-
+        return redirect()->route("subject.show");
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $validate = Validator::make($request->all(), [
             "edit_subject_name" => "required|max:50",
             "edit_id" => "required|numeric"
@@ -55,20 +55,19 @@ class SubjectController extends Controller
         $data->update([
             "subject_name" => $request->edit_subject_name
         ]);
-        return redirect()->route("subject.index");
+        return redirect()->route("subject.show");
     }
 
-    public function destroy(Request $request) {
+    public function destroy(Request $request)
+    {
         $data = Subject::find($request->delete_id);
 
         if ($data != null) {
             $data->delete();
-            return redirect()->route("subject.index");
-        }
-        else {
+            return redirect()->route("subject.show");
+        } else {
             // Add error code
-            return redirect()->route("subject.index");
+            return redirect()->route("subject.show");
         }
-
     }
 }
