@@ -2,6 +2,9 @@
 
 @section('title', 'Dashboard')
 
+@section("back")
+    <a href="{{ route('subject.show') }}" class="fa fa-arrow-left fa-xl"></a>
+@endsection
 
 @section('main')
     <div class="header pb-8 pt-5">
@@ -196,7 +199,7 @@
 
     <div class="modal fade" id="updateStudent">
         <div class="modal-dialog" role="document">
-            <form action="{{ route('subject.update') }}" method="POST" id="update_form">
+            <form action="#" method="POST" id="update_form">
                 @csrf
                 @method('put')
                 <div class="modal-content">
@@ -209,7 +212,7 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="fullname">Fullname:</label>
-                            <input name="fullname" maxlength="50" disabled readonly class="form-control" required
+                            <input name="fullname" maxlength="50" readonly class="form-control" required
                                 id="fullname">
                         </div>
                         <div class="form-group has-feedback">
@@ -217,7 +220,7 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="status">Status:</label>
-                            <select name="status" maxlength="50" class="form-control" required id="status">
+                            <select name="status" class="form-control" required id="status">
                                 <option value="active">Active</option>
                                 <option value="dropped">Dropped</option>
                             </select>
@@ -286,15 +289,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             let table = new DataTable("#subjects");
 
-
-            $('.edit').on('click', function() {
-                name = $(this).data('name')
-                id = $(this).data('id')
-                $("#edit_subject_name").val(name)
-                $("#edit_id").val(id)
-                $('#updateSubejct').modal('show')
-            })
-
             $('.delete').on('click', function() {
                 id = $(this).data('id')
                 $("#delete_id").val(id)
@@ -317,6 +311,7 @@
                         $("#first_sem").val(response.first_sem ? response.first_sem : 0);
                         $("#second_sem").val(response.second_sem ? response.second_sem : 0);
                         $("#grade_id").val(response.id)
+                        $("#status").val(response.status)
                     }
                 })
             })
@@ -327,7 +322,9 @@
                 second_sem = $("#second_sem").val()
                 status = $("#status").val()
                 g_id = $("#grade_id").val()                
-                fullname = $("#fullname").val()                
+                fullname = $("#fullname").val()      
+                console.log(status);
+                          
                 $.ajax({
                     type : "PUT",
                     url : "{{ route('grade.update') }}",
@@ -341,7 +338,7 @@
                     },
                     success: function(response) {
                         console.log(response);
-                        window.location.reload()
+                        // window.location.reload()
                     },
                     error: function(errr) {
                         console.log(errr.responseJSON);
