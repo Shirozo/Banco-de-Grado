@@ -54,7 +54,7 @@
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
                         <h3 class="mb-0" style="float: left;">Subjects</h3>
-                        <a onclick="$('#addSubejct').modal('show')" class="button-34">New Subject</a>
+                        <a id="add-button-modal" class="button-34">New Subject</a>
                     </div>
                     <div style="padding: 1%;">
                         <table id="subjects" class="table" width="100%">
@@ -62,18 +62,23 @@
                                 <tr>
                                     <th class="th-sm">Subject</th>
                                     <th style="text-align: center">Enrolled Student</th>
-                                    <th class="th-sm" style="width: 30%">Action</th>
+                                    <th style="text-align: center">School Year</th>
+                                    <th class="th-sm" style="width: 30%;text-align: center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($subjects as $sb)
                                     <tr>
                                         <td>{{ $sb->subject_name }}</td>
+                                        <td style="text-align: center">{{ $sb->school_year }}</td>
                                         <td style="text-align: center">0</td>
-                                        <td>
-                                            <a href="{{ route('grade.show', ['id' => $sb->id]) }}" class="btn btn-success btn-sm btn-flat">View</a>
-                                            <a class="btn edit btn-secondary btn-sm btn-flat" data-id="{{ $sb->id }}" data-name="{{ $sb->subject_name }}">Edit</a>
-                                            <a class="btn btn-danger btn-sm btn-flat delete" data-id="{{ $sb->id }}">Delete</a>
+                                        <td style="text-align: center">
+                                            <a href="{{ route('grade.show', ['id' => $sb->id]) }}"
+                                                class="btn btn-success btn-sm btn-flat">View</a>
+                                            <a class="btn edit btn-secondary btn-sm btn-flat" data-id="{{ $sb->id }}"
+                                                data-name="{{ $sb->subject_name }}">Edit</a>
+                                            <a class="btn btn-danger btn-sm btn-flat delete"
+                                                data-id="{{ $sb->id }}">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -108,11 +113,12 @@
                             @enderror
                             <label for="subject_name">School Year:</label>
                             <input type="text" name="sy" maxlength="50" class="form-control" required=""
-                                id="sy" placeholder="Enter School Year">
+                                id="sy" placeholder="Enter School Year" readonly>
                         </div>
                     </div>
                     <div class="modal-footer custom-footer">
-                        <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i class="fa fa-save"></i>
+                        <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
+                                class="fa fa-save"></i>
                             Save</button>
                         <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
                             onclick="$('#addSubejct').modal('hide')"><i class="fa fa-close"></i> Close</button>
@@ -126,7 +132,7 @@
         <div class="modal-dialog" role="document">
             <form action="{{ route('subject.update') }}" method="POST">
                 @csrf
-                @method("put")
+                @method('put')
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Subject</h5>
@@ -141,14 +147,15 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="edit_subject_name">Subject:</label>
-                            <input type="text" name="edit_subject_name" maxlength="50" class="form-control" required=""
-                                id="edit_subject_name">
+                            <input type="text" name="edit_subject_name" maxlength="50" class="form-control"
+                                required="" id="edit_subject_name">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-flat pull-left"
                             onclick="$('#updateSubejct').modal('hide')"><i class="fa fa-close"></i> Close</button>
-                        <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i>
+                        <button type="submit" class="btn btn-success btn-flat" name="add"><i
+                                class="fa fa-save"></i>
                             Update</button>
                     </div>
                 </div>
@@ -161,50 +168,54 @@
         <div class="modal-dialog" role="document">
             <form action="{{ route('subject.destroy') }}" method="POST">
                 @csrf
-                @method("delete")
+                @method('delete')
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Delete Subject</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" onclick="$('#deleteSubejct').modal('hide')">&times;</span>
-                        </button>
                     </div>
                     <div class="modal-body">
                         <h2>Are you sure you want to delete this subject?</h2>
                         <input type="hidden" name="delete_id" id="delete_id">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success btn-flat pull-left"
+                    <div class="modal-footer custom-footer" style="margin-top: 10px">
+                        <button type="submit" class="btn btn-danger btn-flat" name="add"
+                            style="background-color: red">
+                            DELETE</button>
+                        <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
                             onclick="$('#deleteSubejct').modal('hide')"><i class="fa fa-close"></i> Close</button>
-                        <button type="submit" class="btn btn-danger btn-flat" name="add"><i class="fa fa-save"></i>
-                            Delete</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    @endsection
+@endsection
 
 
-    @section('scripts')
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                let table = new DataTable("#subjects");
+@section('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let table = new DataTable("#subjects");
 
 
-                $('.edit').on('click', function() {
-                    name = $(this).data('name')
-                    id = $(this).data('id')
-                    $("#edit_subject_name").val(name)
-                    $("#edit_id").val(id)
-                    $('#updateSubejct').modal('show')
-                })
-
-                $('.delete').on('click', function() {
-                    id = $(this).data('id')
-                    $("#delete_id").val(id)
-                    $('#deleteSubejct').modal('show')
-                })
+            $('.edit').on('click', function() {
+                name = $(this).data('name')
+                id = $(this).data('id')
+                $("#edit_subject_name").val(name)
+                $("#edit_id").val(id)
+                $('#updateSubejct').modal('show')
             })
-        </script>
-    @endsection
+
+            $('.delete').on('click', function() {
+                id = $(this).data('id')
+                $("#delete_id").val(id)
+                $('#deleteSubejct').modal('show')
+            })
+
+            $("#add-button-modal").on("click", function() {
+                $('#addSubejct').modal('show')
+                date = new Date()
+                $("#sy").val(`${date.getFullYear()}-${date.getFullYear() + 1}`)
+            })
+        })
+    </script>
+@endsection
