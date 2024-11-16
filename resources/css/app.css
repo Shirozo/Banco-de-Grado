@@ -168,6 +168,11 @@ a {
     background-color: red;
 }
 
+.modal-body > h2 {
+    font-family: "Kanit";
+    text-align: center;
+}
+
 .nav-nav {
     display: flex;
     justify-content: center;
@@ -236,7 +241,6 @@ a {
     outline: 0 solid transparent;
     padding: 8px 18px;
     border: 0;
-    margin-bottom: 2%;
     transition: transform .5s;
     float: right;
 }
@@ -307,4 +311,8 @@ table>tbody>tr {
 
 .no-grade {
     color: black !important;
+}
+
+.no_grade {
+    background-color: #2c2c2c6e;
 }
