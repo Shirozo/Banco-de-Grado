@@ -105,7 +105,8 @@
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
                         <h3 class="mb-0" style="float: left;">{{ $subject->subject_name }}</h3>
-                        <a onclick="$('#addStudent').modal('show')" class="button-34">Add Student</a>
+                        <a onclick="$('#addStudent').modal('show')" class="button-34">ADD STUDENT</a>
+                        <a onclick="$('#addStudent').modal('show')" class="button-34" style="margin-right: 10px">UPLOAD</a>
                     </div>
                     <div style="padding: 1%;">
                         <table id="subjects" class="table table-striped" width="100%">
@@ -300,6 +301,17 @@
                 $('#deleteGrade').modal('show')
             })
 
+            $("#status").on("change", function(e) {
+                if ($(this).val() == "dropped") {
+                    $("#second_sem").attr('readonly', true);
+                    $("#first_sem").attr('readonly', true);
+                } else {
+                    $("#second_sem").attr('readonly', false);
+                    $("#first_sem").attr('readonly', false);
+                }
+
+            })
+
             $(".btn-user-data").on("click", function() {
 
                 id = $(this).data('id')
@@ -318,6 +330,13 @@
                         $("#second_sem").val(response.second_sem ? response.second_sem : 0);
                         $("#grade_id").val(response.id)
                         $("#status").val(response.status)
+                        if (response.status == "dropped") {
+                            $("#second_sem").attr('readonly', true);
+                            $("#first_sem").attr('readonly', true);
+                        } else {
+                            $("#second_sem").attr('readonly', false);
+                            $("#first_sem").attr('readonly', false);
+                        }
                         $('#updateStudent').modal('show')
                     }
                 })
@@ -344,8 +363,7 @@
                         second_sem: second_sem
                     },
                     success: function(response) {
-                        console.log(response);
-                        // window.location.reload()
+                        
                     },
                     error: function(errr) {
                         console.log(errr.responseJSON);
