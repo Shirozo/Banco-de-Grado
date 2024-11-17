@@ -54,7 +54,7 @@
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
                         <h3 class="mb-0" style="float: left;">Subjects</h3>
-                        <a id="add-button-modal" class="button-34">New Subject</a>
+                        <a id="add-button-modal" class="button-34">NEW SUBJECT</a>
                     </div>
                     <div style="padding: 1%;">
                         <table id="subjects" class="table" width="100%">
