@@ -21,6 +21,9 @@ class SubjectController extends Controller
 
     public function store(Request $request)
     {
+
+        // TODO: Add instructor ID to the data
+        
         $validate = Validator::make($request->all(), [
             "subject_name" => "required|max:50",
             "sy" => "required|max:9|min:9"
