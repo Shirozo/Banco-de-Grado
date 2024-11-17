@@ -25,6 +25,7 @@
     <script src="{{ asset('assets/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.bundle.js') }}"></script>
+    <script src="{{ asset('assets/js/sweetalert.min.js') }}"></script>
 
 
     <title>
