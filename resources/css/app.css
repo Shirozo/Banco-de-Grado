@@ -313,6 +313,21 @@ table>tbody>tr {
     color: black !important;
 }
 
+.s-data {
+    margin-top: 5px;
+}
+
 .no_grade {
     background-color: #2c2c2c6e;
+}
+
+.info-header {
+    background-color: #6C5F8D;
+    padding: .5% .5%;
+}
+
+.info-title {
+    color: white;
+    font-family: "Kanit";
+    margin-left: 5px;
 }
