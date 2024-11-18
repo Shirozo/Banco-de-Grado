@@ -125,7 +125,7 @@
                             <tbody>
                                 @foreach ($data as $d)
                                     @php
-                                        if ($d->first_sem && $d->last_sem) {
+                                        if ($d->first_sem && $d->second_sem) {
                                             $average =
                                                 ($d->first_sem + $d->second_sem) / 2
                                                     ? ($d->first_sem + $d->second_sem) / 2
@@ -158,10 +158,11 @@
                                                 data-id="{{ $d->student_id }}">
                                                 <i class="fa fa-gear" style="color:  white !important"></i>
                                             </a>
-                                            <button class="btn btn-sm btn-flat btn-user-view">
+                                            <a class="btn btn-sm btn-flat btn-user-view" data-id="{{ $d->student_id }}">
                                                 <i class="fa fa-eye" style="color:  white !important"></i>
-                                            </button>
-                                            <a class="btn btn-sm btn-flat btn-danger delete" data-id="{{ $d->id }}">
+                                            </a>
+                                            <a class="btn btn-sm btn-flat btn-danger delete"
+                                                data-id="{{ $d->id }}">
                                                 <i class="fa fa-trash" style="color:  white !important"></i>
                                             </a>
                                         </td>
@@ -175,7 +176,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="addStudent">
+    <div class="modal fade " id="addStudent">
         <div class="modal-dialog" role="document">
             <form action="{{ route('grade.store') }}" method="POST">
                 @csrf
@@ -287,6 +288,38 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="studentGrade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">STUDENT GRADE</h5>
+                </div>
+                <div class="modal-body student-data">
+                    <div class="student-data-container">
+                        <div class="info-header">
+                            <h3 class="info-title">STUDENT INFORMATION</h3>
+                        </div>
+                        <div class="student-info">
+                            <h4 class="s-data">Name: Neil Bryan Bagas</h4>
+                            <h4 class="s-data">Student ID: 22-12345</h4>
+                            <h4 class="s-data">Course: BS in Computer Science</h4>
+                            <h4 class="s-data">Year: 3rd Year</h4>
+                            <h4 class="s-data">Section: A</h4>
+                        </div>
+                        <div class="info-header">
+                            <h3 class="info-title">GRADES</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer custom-footer" style="margin-top: 10px">
+                    <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
+                        onclick="$('#studentGrade').modal('hide')"><i class="fa fa-close"></i> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 
@@ -310,6 +343,10 @@
                     $("#first_sem").attr('readonly', false);
                 }
 
+            })
+
+            $(".btn-user-view").on("click", (e) => {
+                $("#studentGrade").modal("show");
             })
 
             $(".btn-user-data").on("click", function() {
@@ -363,7 +400,12 @@
                         second_sem: second_sem
                     },
                     success: function(response) {
-                        
+                        swal({
+                            title: "Success",
+                            text: "Data Updated",
+                            icon: "success",
+                            button: "OK"
+                        });
                     },
                     error: function(errr) {
                         console.log(errr.responseJSON);
