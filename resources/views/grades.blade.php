@@ -293,24 +293,69 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">STUDENT GRADE</h5>
+                    <h5 class="modal-title">STUDENT GRADE REPORT</h5>
                 </div>
-                <div class="modal-body student-data">
-                    <div class="student-data-container">
-                        <div class="info-header">
-                            <h3 class="info-title">STUDENT INFORMATION</h3>
+                <div class="modal-body student-data-container">
+                    <div class="student-header">
+                        <i class="fa-regular fa-user" style="color:black;">
+                            <b> Student Information</b>
+                        </i>
+                    </div>
+                    <div class="data-info">
+                        <div class="left">
+                            <p class="info-title">Name</p>
+                            <b>Neil Bryan Bagas</b>
                         </div>
-                        <div class="student-info">
-                            <h4 class="s-data">Name: Neil Bryan Bagas</h4>
-                            <h4 class="s-data">Student ID: 22-12345</h4>
-                            <h4 class="s-data">Course: BS in Computer Science</h4>
-                            <h4 class="s-data">Year: 3rd Year</h4>
-                            <h4 class="s-data">Section: A</h4>
-                        </div>
-                        <div class="info-header">
-                            <h3 class="info-title">GRADES</h3>
+                        <div class="right">
+                            <p class="info-title">Student ID</p>
+                            <b>22-12345</b>
                         </div>
                     </div>
+                    <div class="data-info">
+                        <div class="left">
+                            <p class="info-title">Course</p>
+                            <b><span class="fa fa-graduation-cap"></span>BS in Computer Science</b>
+                        </div>
+                        <div class="right">
+                            <p class="info-title">Year and Section</p>
+                            <b><span class="fa fa-book-open"></span> 3-A</b>
+                        </div>
+                    </div>
+                    <div class="student-header" style="margin-top: 40px">
+                        <i class="fa fa-book-open" style="color:black;">
+                            <b class="acdmc"> Academic Performance</b>
+                        </i>
+                    </div>
+                    <table class="report-table">
+                        <thead>
+                            <tr class="report-tr">
+                                <th class="report-th" style="text-align: left">Subject</th>
+                                <th class="report-th">1st Sem</th>
+                                <th class="report-th">2nd Sem</th>
+                                <th class="report-th">Average</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="report-tr">
+                                <td class="report-td" style="text-align: left">DAA</td>
+                                <td class="report-td">1.1</td>
+                                <td class="report-td">3.5</td>
+                                <td class="report-td">2.3</td>
+                            </tr>
+                            <tr class="report-tr">
+                                <td class="report-td" style="text-align: left">SE</td>
+                                <td class="report-td">1.1</td>
+                                <td class="report-td">3.5</td>
+                                <td class="report-td">2.3</td>
+                            </tr>
+                            <tr class="report-tr">
+                                <td class="report-td" style="text-align: left">Programming 1</td>
+                                <td class="report-td">1.1</td>
+                                <td class="report-td">3.5</td>
+                                <td class="report-td">2.3</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer custom-footer" style="margin-top: 10px">
                     <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
