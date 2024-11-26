@@ -77,11 +77,21 @@ class GradeController extends Controller
             "subject_id" => "required|numeric"
         ]);
 
-        // !: USE API HERE
-
         if ($valid->fails()) {
-            //Add a va;idation error message
-            return redirect()->back();
+            return response()->json([
+                "message" => "Form Validation Fails"
+            ], 403);
+        }
+
+        $has_data = Grade::where([
+            ["student_id", "=", $request->student_id],
+            ["subject_id", "=", $request->subject_id]
+        ])->first();
+        
+        if ($has_data) {
+            return response()->json([
+                "message" => "Student is already enrolled!"
+            ], 403);
         }
 
         Grade::create([
@@ -89,7 +99,9 @@ class GradeController extends Controller
             "subject_id" => $request->subject_id
         ]);
 
-        return redirect()->back();
+        return response()->json([
+            "message" => "Student enrolled!"
+        ], 200);
     }
 
     public function update(Request $request)
@@ -154,7 +166,7 @@ class GradeController extends Controller
             }
 
             $data = Grade::find($request->delete_id);
-
+            
             if ($data != null) {
                 $data->delete();
                 return response()->json([
@@ -177,13 +189,17 @@ class GradeController extends Controller
         if ($request->has("id") && $request->has("s_id")) {
             $data = DB::table("grades")
                 ->select(DB::raw("
+                            students.first_name, 
+                            students.last_name,
+                            students.middle_name,
+                            students.course,
+                            students.student_id,
+                            students.year,
+                            students.section,
                             grades.first_sem,
                             grades.second_sem,
                             grades.id, 
-                            grades.status, 
-                            students.first_name, 
-                            students.last_name,
-                            students.middle_name
+                            grades.status
                         "))
                 ->join("students", "grades.student_id", "=", "students.id")
                 ->where([
