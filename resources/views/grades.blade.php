@@ -18,8 +18,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title text-uppercase mb-0">Enrolled Student</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ $data->count() }}</span>
+                                        <h5 class="card-title text-muted text-uppercase mb-0">Enrolled Student</h5>
+                                        <span class="h2 font-weight-bold mb-0 enrolled">{{ $data->count() }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -34,8 +34,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title passed text-uppercase mb-0">Passed</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ $passed }}</span>
+                                        <h5 class="card-title text-muted text-uppercase mb-0">Passed</h5>
+                                        <span class="h2 font-weight-bold passed mb-0">{{ $passed }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -50,8 +50,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title failed text-uppercase mb-0">Failed</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ $failed }}</span>
+                                        <h5 class="card-title text-muted text-uppercase mb-0">Failed</h5>
+                                        <span class="h2 font-weight-bold failed mb-0">{{ $failed }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -66,8 +66,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title no-grade text-uppercase mb-0">No Grade</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ $no_grades }}</span>
+                                        <h5 class="card-title text-muted text-uppercase mb-0">No Grade</h5>
+                                        <span class="h2 font-weight-bold mb-0 no-grade">{{ $no_grades }}</span>
                                     </div>
                                 </div>
                                 <p class="mt-3 mb-0 text-muted text-sm">
@@ -105,8 +105,10 @@
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
                         <h3 class="mb-0" style="float: left;">{{ $subject->subject_name }}</h3>
-                        <a onclick="$('#addStudent').modal('show')" class="button-34">ADD STUDENT</a>
-                        <a onclick="$('#addStudent').modal('show')" class="button-34" style="margin-right: 10px">UPLOAD</a>
+                        <a onclick="$('#addStudent').modal('show')" class="button-34 button-35"><i class="fa fa-plus"></i>
+                            ADD STUDENT</a>
+                        <a onclick="$('#uploadStudent').modal('show')" class="button-34"
+                            style="margin-right: 10px">UPLOAD</a>
                     </div>
                     <div style="padding: 1%;">
                         <table id="subjects" class="table table-striped" width="100%">
@@ -177,8 +179,8 @@
     </div>
 
     <div class="modal fade " id="addStudent">
-        <div class="modal-dialog" role="document">
-            <form action="{{ route('grade.store') }}" method="POST">
+        <div class="modal-dialog" role="document" id="addModal">
+            <form action="#" method="POST">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -193,7 +195,6 @@
                             <select name="student_id" maxlength="50" class="form-control" required id="student_id">
                             </select>
                         </div>
-                        <input type="hidden" name="subject_id" id="subject_id" value="{{ $subject->id }}">
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
@@ -201,6 +202,38 @@
                             ADD</button>
                         <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
                             onclick="$('#addStudent').modal('hide')"><i class="fa fa-close"></i> Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade " id="uploadStudent">
+        <div class="modal-dialog" role="document">
+            <form action="{{ route('grade.store') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">UPLOAD STUDENT</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div id="drop-area">
+                            <div class="my-form">
+                                <p>Upload file with the file dialog or by dragging and dropping csv file onto the
+                                    dashed region.</p>
+                                <input type="file" id="fileElem" accept=".csv">
+                                <label class="button" for="fileElem">Select some files</label>
+                                <div id="file-name"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="subject_id" id="subject_id" value="{{ $subject->id }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
+                                class="fa fa-plus"></i>
+                            ADD</button>
+                        <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
+                            onclick="$('#uploadStudent').modal('hide')"><i class="fa fa-close"></i> Close</button>
                     </div>
                 </div>
             </form>
@@ -265,7 +298,7 @@
 
     <div class="modal fade" id="deleteGrade">
         <div class="modal-dialog" role="document">
-            <form action="{{ route('grade.destroy') }}" method="POST">
+            <form action="#" method="POST" id="deleteModal">
                 @csrf
                 @method('delete')
                 <div class="modal-content">
@@ -304,27 +337,25 @@
                     <div class="data-info">
                         <div class="left">
                             <p class="info-title">Name</p>
-                            <b>Neil Bryan Bagas</b>
+                            <b id="student-name"></b>
                         </div>
                         <div class="right">
                             <p class="info-title">Student ID</p>
-                            <b>22-12345</b>
+                            <b id="student-id"></b>
                         </div>
                     </div>
                     <div class="data-info">
                         <div class="left">
                             <p class="info-title">Course</p>
-                            <b><span class="fa fa-graduation-cap"></span>BS in Computer Science</b>
+                            <b id="student-course"></b>
                         </div>
                         <div class="right">
                             <p class="info-title">Year and Section</p>
-                            <b><span class="fa fa-book-open"></span> 3-A</b>
+                            <b id="student-year-sec"> </b>
                         </div>
                     </div>
                     <div class="student-header" style="margin-top: 40px">
-                        <i class="fa fa-book-open" style="color:black;">
-                            <b class="acdmc"> Academic Performance</b>
-                        </i>
+                        <b class="acdmc"><span class="fa fa-book-open"></span> Academic Performance</b>
                     </div>
                     <table class="report-table">
                         <thead>
@@ -372,6 +403,120 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let table = new DataTable("#subjects");
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('fileElem');
+            const fileNameDisplay = document.getElementById('file-name');
+
+
+            ;
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false)
+            })
+
+            ;
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false)
+            })
+
+            function highlight(e) {
+                dropArea.classList.add('highlight')
+            }
+
+            function unhighlight(e) {
+                dropArea.classList.remove('highlight')
+            }
+
+            fileInput.addEventListener('change', handleFileSelect);
+
+            dropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropArea.classList.add('dragging');
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('dragging');
+            });
+
+            dropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropArea.classList.remove('dragging');
+                const files = event.dataTransfer.files;
+                console.log(files);
+
+                if (files.length > 0) {
+                    updateFileName(files[0]);
+                }
+            });
+
+            function updateFileName(file) {
+                fileNameDisplay.textContent = `Selected file: ${file.name}`;
+            }
+
+            function handleFileSelect(event) {
+                const files = event.target.files;
+                if (files.length > 0) {
+                    updateFileName(files[0]);
+                }
+            }
+
+
+            $("#deleteModal").on("submit", function(e) {
+                e.preventDefault();
+                id = $("#delete_id").val()
+                $.ajax({
+                    type: "DELETE",
+                    url: "{{ route('grade.destroy') }}",
+                    dataType: "json",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        delete_id: id
+                    },
+                    success: function(response) {
+                        swal({
+                            title: "Success",
+                            text: response.message,
+                            icon: "success",
+                            button: "Close"
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                })
+
+            })
+
+            $("#addModal").on("submit", function(e) {
+                e.preventDefault();
+                let id = $("#student_id").val();
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('grade.store') }}",
+                    dataType: "json",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        student_id: id,
+                        subject_id: "{{ $subject->id }}"
+                    },
+                    success: function(response) {
+                        swal({
+                            title: "Success",
+                            text: response.message,
+                            icon: "success",
+                            button: "Close"
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }, error: function(errr) {
+                        swal({
+                            title: "Error",
+                            text: errr.responseJSON.message,
+                            icon: "error",
+                            button: "Close"
+                        })
+                    }
+
+                })
+            })
 
             $('.delete').on('click', function() {
                 id = $(this).data('id')
@@ -380,6 +525,8 @@
             })
 
             $("#status").on("change", function(e) {
+                console.log($(this).val());
+
                 if ($(this).val() == "dropped") {
                     $("#second_sem").attr('readonly', true);
                     $("#first_sem").attr('readonly', true);
@@ -390,8 +537,42 @@
 
             })
 
-            $(".btn-user-view").on("click", (e) => {
-                $("#studentGrade").modal("show");
+            $(".btn-user-view").on("click", function() {
+                id = $(this).data('id')
+                if (id) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('grade.api') }}",
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            s_id: "{{ $subject->id }}"
+                        },
+                        success: function(response) {
+                            $("#student-name").html(response.first_name + " " + response
+                                .middle_name +
+                                " " + response.last_name)
+                            $("#student-id").html(response.student_id);
+                            $("#student-course").html(
+                                `<span class="fa fa-graduation-cap"></span > ${response.course}`
+                            );
+                            $("#student-year-sec").html(
+                                `<span class="fa fa-book-open"></span> ${response.year}-${response.section}`
+                            )
+                            $('#studentGrade').modal('show')
+                        }
+                    })
+                } else {
+                    swal({
+                        title: "Error",
+                        text: "Something went wrong!",
+                        icon: "error",
+                        button: "Close"
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+
             })
 
             $(".btn-user-data").on("click", function() {
@@ -431,7 +612,6 @@
                 status = $("#status").val()
                 g_id = $("#grade_id").val()
                 fullname = $("#fullname").val()
-                console.log(status);
 
                 $.ajax({
                     type: "PUT",
@@ -450,6 +630,8 @@
                             text: "Data Updated",
                             icon: "success",
                             button: "OK"
+                        }).then(() => {
+                            window.location.reload();
                         });
                     },
                     error: function(errr) {

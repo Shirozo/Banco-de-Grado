@@ -36,13 +36,14 @@ a {
     display: flex;
     justify-content: space-between;
     padding: 0.7% 0.7%;
-    background-color: #765DD9;
+    background-color: #376507;
 }
 
 .nav-title>h1 {
     color: white;
-    font-family: "Kadwa";
+    font-family: "Arial";
     height: 70%;
+    color: #F4D22E;
 }
 
 .login-main-content {
@@ -69,6 +70,8 @@ a {
 
 .fa-arrow-left {
     color: white;
+    margin-left: 10px;
+    color: #F4D22E;
 }
 
 .login-title {
@@ -95,12 +98,15 @@ a {
 
 .user-search {
     width: 400px !important;
-    background-color: inherit !important;
+    background-color: #447423 !important;
+    border: solid 0.5px #447423 !important;
+    outline: solid 0.5px #447423 !important;
+    color: white !important;
+}
+
+.user-search:focus {
     border: solid 0.5px white !important;
     outline: solid 0.5px white !important;
-    background-position: 10px 10px;
-    background-repeat: no-repeat;
-    color: white !important;
 }
 
 #user-nav-action {
@@ -121,6 +127,11 @@ a {
     /* Pointer color matches bubble */
 }
 
+.fa-graduation-cap,
+.fa-book-open {
+    color: #8467ED !important;
+}
+
 #user-nav-action>a {
     padding: 1% 1%;
 }
@@ -131,7 +142,7 @@ a {
 }
 
 .btn-add {
-    background-color: #8667ED !important;
+    background-color: #447423 !important;
     border: 1px solid #8667ED !important;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19);
 }
@@ -228,12 +239,12 @@ a {
 
 
 .button-34 {
-    background: #8667ED;
+    background: #376507;
     border-radius: 4px;
     box-sizing: border-box;
     color: white !important;
     cursor: pointer;
-    font-family: inherit;
+    font-family: "Arial";
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
@@ -243,6 +254,12 @@ a {
     border: 0;
     transition: transform .5s;
     float: right;
+}
+
+.button-35 {
+    background-color: white;
+    color: #376507 !important;
+    border: solid 1px #376507;
 }
 
 .button-34:hover {
@@ -302,15 +319,19 @@ table>tbody>tr {
 }
 
 .passed {
-    color: green !important;
+    color: #5BA54C !important;
 }
 
 .failed {
-    color: red !important;
+    color: #DD4135 !important;
 }
 
 .no-grade {
-    color: black !important;
+    color: #E95A38 !important;
+}
+
+.enrolled {
+    color: #376507 !important;
 }
 
 .s-data {
@@ -333,7 +354,9 @@ table>tbody>tr {
     flex-direction: row;
     margin-bottom: 10px;
 }
-.left, .right {
+
+.left,
+.right {
     width: 50%;
 }
 
@@ -348,12 +371,13 @@ table>tbody>tr {
     color: black;
 }
 
-.student-header > i > b {
+.student-header>i>b {
     font-family: "Arial";
 }
 
 .acdmc {
     font-size: 23px;
+    color: black;
 }
 
 .report-table {
@@ -361,18 +385,69 @@ table>tbody>tr {
     border-collapse: collapse;
 }
 
-.report-th, .report-td {
+.report-th,
+.report-td {
     padding: 12px;
     text-align: center;
     border-bottom: 1px solid #ddd;
 }
+
 .report-th {
     font-family: "Arial";
 }
+
 .report-tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
 .report-tr:hover {
     background-color: #0000001e;
+}
+
+
+#drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    font-family: sans-serif;
+    padding: 1% 4%;
+}
+
+#drop-area.highlight {
+    border-color: purple;
+}
+
+#drop-area > p {
+    margin-top: 0;
+}
+
+.my-form {
+    margin-bottom: 10px;
+}
+
+#gallery {
+    margin-top: 10px;
+}
+
+#gallery img {
+    width: 150px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px;
+    background: #ccc;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.button:hover {
+    background: #ddd;
+}
+
+#fileElem {
+    display: none;
 }
