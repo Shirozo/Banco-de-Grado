@@ -416,7 +416,7 @@ table>tbody>tr {
     border-color: purple;
 }
 
-#drop-area > p {
+#drop-area>p {
     margin-top: 0;
 }
 
@@ -450,4 +450,27 @@ table>tbody>tr {
 
 #fileElem {
     display: none;
+}
+
+.student-upload {
+    width: 300px;
+    height: 200px;
+    border: dashed grey 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#form-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0% auto;
+}
+
+#filedata {
+    width: 100%;
 }
