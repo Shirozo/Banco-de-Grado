@@ -208,22 +208,33 @@
         </div>
     </div>
 
-    <div class="modal fade " id="uploadStudent">
+    <div class="modal fade" data-bs-backdrop='static' id="uploadStudent">
         <div class="modal-dialog" role="document">
-            <form action="{{ route('grade.store') }}" method="POST">
+            <form action="{{ route('grade.upload') }}" method="POST" enctype="multipart/form-data" id="formUpload">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">UPLOAD STUDENT</h5>
                     </div>
                     <div class="modal-body">
-                        <div id="drop-area">
-                            <div class="my-form">
-                                <p>Upload file with the file dialog or by dragging and dropping csv file onto the
-                                    dashed region.</p>
-                                <input type="file" id="fileElem" accept=".csv">
-                                <label class="button" for="fileElem">Select some files</label>
-                                <div id="file-name"></div>
+                        <div id="form-div">
+                            <label for="filedata">
+                                <div class="student-upload" ondrop="handleDrop(event)"
+                                    ondragover="handleDragOver(event)">
+                                    <img src="{{ asset('images/upload.png') }}" width="100px" height="100px"
+                                        id="no_upload">
+                                    <img src="{{ asset('images/uploaded.png') }}" width="100px" height="100px"
+                                        id="uploaded" style="display: none">
+                                </div>
+                            </label>
+                            <input onchange="changeUploadicon()" type="file" accept=".csv, .xlsx" name="filedata"
+                                id="filedata" required>
+                        </div>
+                        <div class="modal-body" id="add_progress" style="display: none;">
+                            <p class="text-center" id="ajax_return"></p>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated active"
+                                    role="progressbar" style="width: 2%" id="progress-bar"></div>
                             </div>
                         </div>
                         <input type="hidden" name="subject_id" id="subject_id" value="{{ $subject->id }}">
@@ -231,7 +242,7 @@
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success btn-flat btn-add" name="add"><i
                                 class="fa fa-plus"></i>
-                            ADD</button>
+                            UPLOAD</button>
                         <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
                             onclick="$('#uploadStudent').modal('hide')"><i class="fa fa-close"></i> Close</button>
                     </div>
@@ -403,62 +414,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let table = new DataTable("#subjects");
-            const dropArea = document.getElementById('drop-area');
-            const fileInput = document.getElementById('fileElem');
-            const fileNameDisplay = document.getElementById('file-name');
-
-
-            ;
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false)
-            })
-
-            ;
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false)
-            })
-
-            function highlight(e) {
-                dropArea.classList.add('highlight')
-            }
-
-            function unhighlight(e) {
-                dropArea.classList.remove('highlight')
-            }
-
-            fileInput.addEventListener('change', handleFileSelect);
-
-            dropArea.addEventListener('dragover', (event) => {
-                event.preventDefault();
-                dropArea.classList.add('dragging');
-            });
-
-            dropArea.addEventListener('dragleave', () => {
-                dropArea.classList.remove('dragging');
-            });
-
-            dropArea.addEventListener('drop', (event) => {
-                event.preventDefault();
-                dropArea.classList.remove('dragging');
-                const files = event.dataTransfer.files;
-                console.log(files);
-
-                if (files.length > 0) {
-                    updateFileName(files[0]);
-                }
-            });
-
-            function updateFileName(file) {
-                fileNameDisplay.textContent = `Selected file: ${file.name}`;
-            }
-
-            function handleFileSelect(event) {
-                const files = event.target.files;
-                if (files.length > 0) {
-                    updateFileName(files[0]);
-                }
-            }
-
 
             $("#deleteModal").on("submit", function(e) {
                 e.preventDefault();
@@ -485,6 +440,43 @@
 
             })
 
+            $("#formUpload").on("submit", function(e) {
+                e.preventDefault();
+
+                let formData = new FormData($('#formUpload')[0]);
+
+                $.ajax({
+                    url: "{{ route('grade.upload') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        error_m = ""
+                        if (response.errors.length >= 1) {
+                            error_m = `Success but student error below:\n${response.errors.join(', ')}.`
+                        }
+                        swal({
+                            title: "Success",
+                            text: `${response.message}\n${error_m}`,
+                            icon: "success",
+                            button: "Close"
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    },
+                    error: function(err) {
+                        swal({
+                            title: "Error",
+                            text: err.responseJSON.message,
+                            icon: "error",
+                            button: "Close"
+                        })
+                    }
+                })
+
+            })
+
             $("#addModal").on("submit", function(e) {
                 e.preventDefault();
                 let id = $("#student_id").val();
@@ -506,7 +498,8 @@
                         }).then(() => {
                             window.location.reload();
                         });
-                    }, error: function(errr) {
+                    },
+                    error: function(errr) {
                         swal({
                             title: "Error",
                             text: errr.responseJSON.message,
@@ -662,5 +655,31 @@
                 }
             })
         })
+
+        function changeUploadicon() {
+            $("#no_upload").css('display', 'none')
+            $("#uploaded").css('display', 'block')
+        }
+
+
+        function handleDragOver(event) {
+            event.preventDefault()
+            event.dataTransfer.dropEffec = "copy"
+        }
+
+
+        function handleDrop(event) {
+            event.preventDefault()
+            console.log(event.dataTransfer);
+
+            const files = event.dataTransfer.files;
+
+
+            const fileInput = document.getElementById("filedata");
+            fileInput.files = files;
+
+            $("#no_upload").css('display', 'none')
+            $("#uploaded").css('display', 'block')
+        }
     </script>
 @endsection
