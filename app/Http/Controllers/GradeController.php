@@ -6,6 +6,7 @@ use App\Models\Grade;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Termwind\Components\Raw;
 
@@ -30,6 +31,7 @@ class GradeController extends Controller
             ->where("grades.subject_id", "=", $id)
             ->get();
 
+        // Retreive subject data
         $subject = Subject::find($id);
 
         $baseQuery = DB::table("grades")
@@ -37,14 +39,18 @@ class GradeController extends Controller
             ->where("grades.subject_id", "=", $id)
             ->whereRaw("status = 'active'");
 
+
+        // Kuhaa an mga pinasar
         $passed = $baseQuery->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
             ->whereRaw("((grades.first_sem + grades.second_sem) / 2) BETWEEN 1 AND 3")
             ->count();
 
+        //  Kuhaa an mga failed
         $failed = $baseQuery->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
             ->whereRaw("((grades.first_sem + grades.second_sem) / 2) > 3")
             ->count();
 
+        // Kuhaa an wara grade
         $no_grades = DB::table("grades")
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
@@ -52,6 +58,7 @@ class GradeController extends Controller
             ->whereRaw("grades.first_sem IS NULL OR grades.second_sem IS NULL")
             ->count();
 
+        // Kuhaa an mga dropped
         $dropped = DB::table("grades")
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
@@ -59,7 +66,7 @@ class GradeController extends Controller
             ->count();
 
 
-
+        // Render the data
         return view("grades", [
             "subject" => $subject,
             "data" => $data,
@@ -72,11 +79,13 @@ class GradeController extends Controller
 
     public function store(Request $request)
     {
+        // Check Validate User Input
         $valid = Validator::make($request->all(), [
             "student_id" => "required|numeric",
             "subject_id" => "required|numeric"
         ]);
 
+        // Check if valid, return 403 if not
         if ($valid->fails()) {
             return response()->json([
                 "message" => "Form Validation Fails"
@@ -87,13 +96,16 @@ class GradeController extends Controller
             ["student_id", "=", $request->student_id],
             ["subject_id", "=", $request->subject_id]
         ])->first();
-        
+
+
+        // Check if student already enroll, return error if already enrolled
         if ($has_data) {
             return response()->json([
                 "message" => "Student is already enrolled!"
             ], 403);
         }
 
+        // Add to db if not enrolled
         Grade::create([
             "student_id" => $request->student_id,
             "subject_id" => $request->subject_id
@@ -107,12 +119,14 @@ class GradeController extends Controller
     public function update(Request $request)
     {
         try {
+            // Check if user has grade_id and return error if doesn't
             if (!$request->has("grade_id")) {
                 return response()->json([
                     "message" => "User ID is required!"
                 ], 403);
             }
 
+            // Check if the first sem and second sem is in 0.1 - 0.9, return error
             if (($request->first_sem >= .1 && $request->first_sem < 1) ||
                 ($request->second_sem >= .1 && $request->second_sem < 1)
             ) {
@@ -121,6 +135,8 @@ class GradeController extends Controller
                 ], 403);
             }
 
+
+            // Validate the data
             $validation = Validator::make($request->all(), [
                 "fullname" => "required",
                 "status" => "required",
@@ -128,6 +144,7 @@ class GradeController extends Controller
                 "second_sem" => "required|numeric"
             ]);
 
+            // Return error if validation fails
             if ($validation->fails()) {
                 return response()->json([
                     "message" => "Form Validation Fails!"
@@ -139,16 +156,25 @@ class GradeController extends Controller
 
             $data = Grade::find($request->grade_id);
 
-            $data->update([
-                "status" => $request->status,
-                "first_sem" => $first_sem,
-                "second_sem" => $second_sem,
-                "status" => $request->status
-            ]);
+            // Check if student have record
+            if ($data != null) {
+                // Update if there's a record
+                $data->update([
+                    "status" => $request->status,
+                    "first_sem" => $first_sem,
+                    "second_sem" => $second_sem,
+                    "status" => $request->status
+                ]);
 
+                return response()->json([
+                    "message" => "Updated Success!"
+                ], 200);
+            }
+
+            // return if no record
             return response()->json([
-                "message" => "Updated Success!"
-            ], 200);
+                "message" => "Data doesn't exist!"
+            ], 403);
         } catch (\Throwable $th) {
             return response()->json([
                 "message" => $th->getMessage()
@@ -159,6 +185,7 @@ class GradeController extends Controller
     public function delete(Request $request)
     {
         try {
+            // Chekk if has id, return error if no id
             if (!$request->has("delete_id")) {
                 return response()->json([
                     "message" => "User ID is required!"
@@ -166,8 +193,11 @@ class GradeController extends Controller
             }
 
             $data = Grade::find($request->delete_id);
-            
+
+            // Check if there's data, return error if no data
             if ($data != null) {
+
+                // Delete if data exist and return success
                 $data->delete();
                 return response()->json([
                     "message" => "Deleted Success!"
@@ -217,5 +247,21 @@ class GradeController extends Controller
         return response()->json([
             "message" => "Invalid Parameters"
         ], 404);
+    }
+
+    public function upload(Request $request)
+    {
+        if ($request->has('filedata')) {
+            try {
+                $file = $request->file('filedata');
+
+                Storage::put("Data.csv", $file);
+                return response()->json(['message' => 'File uploaded successfully!']);
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        } else {
+            return response()->json(['message' => 'No file selected!'], 403);
+        }
     }
 }
