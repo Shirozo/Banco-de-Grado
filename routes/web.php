@@ -25,7 +25,9 @@ Route::group(["prefix" => "grades", "as" => "grade."], function () {
 
     Route::post("/enroll/student", [GradeController::class, "store"])->name("store");
 
-    Route::put('/grades/update', [GradeController::class, "update"])->name("update");
+    Route::put('/update', [GradeController::class, "update"])->name("update");
+
+    Route::post("/upload/student/data", [GradeController::class, "upload"])->name("upload");
 
     Route::delete('/grades/id', [GradeController::class, "delete"])->name("destroy");
 
