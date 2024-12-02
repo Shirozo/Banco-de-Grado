@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grade;
+use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -251,14 +253,58 @@ class GradeController extends Controller
 
     public function upload(Request $request)
     {
-        if ($request->has('filedata')) {
+        if ($request->has('filedata') && $request->has("subject_id")) {
             try {
                 $file = $request->file('filedata');
 
-                Storage::put("Data.csv", $file);
-                return response()->json(['message' => 'File uploaded successfully!']);
+                if (!Storage::exists("csv_uploads")) {
+                    Storage::createDirectory("csv_uploads");
+                }
+                // $filename = Auth::user()->username . "_" . time() . '_' . $file->getClientOriginalName();
+                $filename = "HEllo_world" . "_" . time() . '_' . $file->getClientOriginalName();
+
+                $filepath = $file->storeAs("csv_uploads", $filename);
+
+                $data = file($request->filedata);
+                unset($data[0]);
+
+                DB::beginTransaction();
+
+                $errors = [];
+
+                foreach ($data as $d) {
+                    try {
+                        $student =  Student::where("student_id", "=", trim($d))->first();
+
+                        if ($student != null) {
+                            $has_data = Grade::where([
+                                ["student_id", "=", $student->id],
+                                ["subject_id", "=", $request->subject_id]
+                            ])->first();
+
+                            if ($has_data == null) {
+                                Grade::create([
+                                    "student_id" => $student->id,
+                                    "subject_id" => $request->subject_id
+                                ]);
+                            }
+                            array_push($errors, trim($d));
+                            
+                        } else {
+                            array_push($errors, trim($d));
+                        }
+                    } catch (\Throwable $th) {
+                        array_push($errors, trim($d));
+                    }
+                }
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'File uploaded successfully!',
+                    "errors" => $errors
+                ], 200);
             } catch (\Throwable $th) {
-                throw $th;
+                return response()->json(['message' => 'Server Error!'], 403);
             }
         } else {
             return response()->json(['message' => 'No file selected!'], 403);
