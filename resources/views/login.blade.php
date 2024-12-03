@@ -20,17 +20,18 @@
         </div>
     </nav>
     <div class="login-main-content">
-        <form class="login-form">
+        <form class="login-form" action="{{ route('login') }}" method="POST">
+            @csrf
             <div class="login-title">
                 <h1>LOG IN</h1>
             </div>
             <div class="form-field">
                 <label for="username">Username:</label>
-                <input type="text" class="form-control" placeholder="Enter your username">
+                <input type="text" name="username" required class="form-control" placeholder="Enter your username">
             </div>
             <div class="form-field">
                 <label for="password">Password:</label>
-                <input type="text" class="form-control" placeholder="Enter your password">
+                <input type="password" name="password" required class="form-control" placeholder="Enter your password">
             </div>
             <button type="submit" class="form-control form-submit">
                 <span>LOG IN</span>
