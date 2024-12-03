@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->char('first_name', length:50);
-            $table->char('last_name', length:50);
-            $table->char('middle_name', length:50);
+            $table->char('name', length:100);
             $table->char("student_id", 8);
             $table->char("course", 50);
             $table->enum("year", [1, 2, 3, 4]);

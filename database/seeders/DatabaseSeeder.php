@@ -17,16 +17,14 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::create([
-            'first_name' => 'Test',
-            'last_name' => 'Me',
-            'middle_name' => 'User',
-            'email' => 'test@example.com',
+            'name' => 'admin',
+            'username' => 'admin',
+            'password' => "admin",
+            "user_type" => 1
         ]);
 
         Student::create([
-            'first_name' => 'Test',
-            'last_name' => 'Sample',
-            'middle_name' => 'Data',
+            'name' => 'Test Data',
             "student_id" => "22-12345",
             "course" => "computer science",
             "year" => 1,
