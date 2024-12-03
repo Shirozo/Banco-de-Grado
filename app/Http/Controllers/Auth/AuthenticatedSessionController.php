@@ -14,7 +14,7 @@ class AuthenticatedSessionController extends Controller
     public function showForm() {
 
         if (Auth::user()) {
-            return redirect()->intended(route("index"));
+            return redirect()->intended(route("subject.show"));
         }
 
         return view("login");
@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route("index"));
+        return redirect()->intended(route("subject.show"));
     }
 
     /**
