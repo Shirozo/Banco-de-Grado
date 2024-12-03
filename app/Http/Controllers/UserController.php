@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function show(Request $request) {
+        return view("users");
+    }
+
     public function api(Request $request)
     {
         $term = trim($request->q);
