@@ -12,17 +12,13 @@ class Student extends Model
 
 
     protected $searchableColumns = [
-        'first_name',
-        'last_name',
-        'middle_name',
+        'name',
         'student_id'
     ];
 
 
     protected $fillable = [ 
-        'first_name',
-        'middle_name',
-        'last_name',
+        'name',
         'student_id',
         'course',
         'year',
