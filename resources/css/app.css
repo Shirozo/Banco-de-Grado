@@ -63,7 +63,7 @@ a {
     padding: 1% 1%;
     width: 23%;
     height: 48%;
-    border: #8467ED solid 1px;
+    border: #376507 solid 1px;
     border-radius: 16px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19);
 }
@@ -81,7 +81,7 @@ a {
 }
 
 .form-field>label {
-    color: #8467ED;
+    color: #376507;
 }
 
 .form-control {
@@ -92,7 +92,7 @@ a {
 .form-submit {
     color: white !important;
     font: bold !important;
-    background-color: #8467ED !important;
+    background-color: #376507 !important;
     outline: none !important;
 }
 
@@ -127,10 +127,6 @@ a {
     /* Pointer color matches bubble */
 }
 
-.fa-graduation-cap,
-.fa-book-open {
-    color: #8467ED !important;
-}
 
 #user-nav-action>a {
     padding: 1% 1%;
