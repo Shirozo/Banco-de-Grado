@@ -6,8 +6,8 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(["prefix" => "", "as" => "subject."], function () {
-    Route::get('/', [SubjectController::class, 'show'])->name("index");
+Route::group(["prefix" => "", "as" => "subject.", "middleware" => ['auth']], function () {
+    // Route::get('/', [SubjectController::class, 'show'])->name("index");
 
     Route::get('/', [SubjectController::class, 'show'])->name("show");
 
@@ -19,7 +19,7 @@ Route::group(["prefix" => "", "as" => "subject."], function () {
 });
 
 
-Route::group(["prefix" => "grades", "as" => "grade."], function () {
+Route::group(["prefix" => "grades", "as" => "grade.", "middleware" => ['auth']], function () {
 
     Route::get("/view/subject/id={id}", [GradeController::class, "show"])->name("show");
 
@@ -35,13 +35,25 @@ Route::group(["prefix" => "grades", "as" => "grade."], function () {
 });
 
 
-Route::group(["prefix" => "user", "as" => "user."], function () {
+Route::group(["prefix" => "user", "as" => "user.", "middleware" => ['auth']], function () {
 
     Route::get('/find/id', [UserController::class, "api"])->name("api");
 });
 
-Route::group(["prefix" => "student", "as" => "student."], function () {
+Route::group(["prefix" => "student", "as" => "student.", "middleware" => ['auth']], function () {
 
+    Route::get("/", [StudentController::class, "show"])->name("show");
+    
     Route::get("/find/id", [StudentController::class, "api"])->name("api");
+
+    Route::get("/data/all", [StudentController::class, "dataApi"])->name("dataApi");
+
+    Route::post("/store/data", [StudentController::class, "store"])->name("store");
+
+    Route::delete("/delete/data", [StudentController::class, "destroy"])->name("destroy");
+
+    Route::put('/update/data', [StudentController::class, "update"])->name("update");
+
+    Route::post("/upload/data", [StudentController::class, "upload"])->name("upload");
 });
 require __DIR__ . '/auth.php';
