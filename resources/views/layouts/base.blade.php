@@ -37,16 +37,18 @@
 
     <!-- Specific CSS goes HERE -->
 
-    
+
 </head>
 
 <body class="" style="background-color: #F4F2FF">
 
-    {{-- @include("layouts.sidenav") --}}
+    @if (Auth::user()->user_type == 1)
+        @include('layouts.sidenav')
+    @endif
 
     <div class="main-content" id="panel">
 
-        @include("layouts.navbar")
+        @include('layouts.navbar')
 
         @yield('main')
 
