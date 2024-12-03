@@ -16,7 +16,7 @@
         <div class="nav-action">
             <i class="fa fa-user fa-lg" id="user-icon"></i>
             <div class="search-result s-inactive" id="user-nav-action">
-               <a href="#">Log Out</a>
+               <a href="{{ route('logout') }}">Log Out</a>
             </div>
         </div>
     </div>
@@ -66,7 +66,7 @@
                         result_html = ""
                         for (var i = 0; i < data.length; i++) {
                             result_html +=
-                                `<h4 class="result" onclick="studentData()">${data[i].name}</h4>`                      
+                                `<h4 class="result" onclick="studentData(${data[i].id})">${data[i].name}</h4>`                      
                         }
                     }
                     $("#search-result").html(result_html)
