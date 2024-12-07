@@ -24,7 +24,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ route('user.show') }}">
                             <i class="fa fa-users"></i>
                             <span class="nav-link-text">Users</span>
                         </a>
