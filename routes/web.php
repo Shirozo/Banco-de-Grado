@@ -7,7 +7,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "", "as" => "subject.", "middleware" => ['auth']], function () {
-    // Route::get('/', [SubjectController::class, 'show'])->name("index");
 
     Route::get('/', [SubjectController::class, 'show'])->name("show");
 
@@ -37,7 +36,17 @@ Route::group(["prefix" => "grades", "as" => "grade.", "middleware" => ['auth']],
 
 Route::group(["prefix" => "user", "as" => "user.", "middleware" => ['auth']], function () {
 
+    Route::get("/", [UserController::class, "show"])->name("show");
+
     Route::get('/find/id', [UserController::class, "api"])->name("api");
+
+    Route::get("/api/data", [UserController::class, "userDataApi"])->name("dataApi");
+
+    Route::post("/store/new/data", [UserController::class, "store"])->name("store");
+
+    Route::delete("/delete/data", [UserController::class, "destroy"])->name("destroy");
+
+    Route::put('/update/data', [UserController::class, "update"])->name("update");
 });
 
 Route::group(["prefix" => "student", "as" => "student.", "middleware" => ['auth']], function () {
