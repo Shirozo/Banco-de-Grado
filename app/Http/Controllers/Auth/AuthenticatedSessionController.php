@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class AuthenticatedSessionController extends Controller
 {
 
-    public function showForm() {
+    public function showForm()
+    {
 
         if (Auth::user()) {
             return redirect()->intended(route("subject.show"));
@@ -25,11 +26,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
 
-        $request->session()->regenerate();
+            $request->session()->regenerate();
 
-        return redirect()->intended(route("subject.show"));
+            return response()->json([
+                "message" => "valid!"
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "message" => "Invalid!"
+            ], 403);
+        }
     }
 
     /**
