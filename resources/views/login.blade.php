@@ -39,9 +39,6 @@
         </form>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            console.log($("#here"));
-        })
     </script>
 </body>
 
