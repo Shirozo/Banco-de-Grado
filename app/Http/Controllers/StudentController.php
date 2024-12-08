@@ -133,12 +133,31 @@ class StudentController extends Controller
 
     public function dataApi(Request $request)
     {
-        if ($request->has("id")) {
-            $data = Student::find($request->id);
+        if ($request->has("id") && $request->has("i_id")) {
+            $personal = Student::find($request->id);
+            $grades = DB::table('grades')
+                ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
+                ->select(
+                    'grades.id',
+                    'grades.first_sem',
+                    'grades.second_sem',
+                    'subjects.subject_name',
+                    'subjects.school_year'
+                )
+                ->whereIn('grades.subject_id', function ($query) use ($request) {
+                    $query->select('id')
+                        ->from('subjects')
+                        ->where('instructor_id', $request->i_id);
+                })
+                ->where('grades.student_id', $request->id)
+                ->orderBy('subjects.school_year')
+                ->get();
 
-            if ($data) {
+
+            if ($personal) {
                 return response()->json([
-                    "data" => $data
+                    "personal" => $personal,
+                    "grades" => $grades
                 ]);
             }
 
@@ -150,6 +169,42 @@ class StudentController extends Controller
             "message" => "Missing ID!"
         ], 403);
     }
+
+    public function all(Request $request)
+    {
+        if ($request->has("id")) {
+            $personal = Student::find($request->id);
+
+            if (!$personal) {
+                return response()->json([
+                    "message" => "Student Don't Exist!"
+                ], 200);
+            }
+
+            $grades = DB::table('grades')
+                ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
+                ->select(
+                    'grades.id',
+                    'grades.first_sem',
+                    'grades.second_sem',
+                    'subjects.subject_name',
+                    'subjects.school_year'
+                )->where('grades.student_id', $request->id)
+                ->orderBy('subjects.school_year')
+                ->get();
+                
+            return response()->json([
+                "personal" => $personal,
+                "grades" => $grades
+            ]);
+        }
+
+        return response()->json([
+            "message" => "Can't find student data!"
+        ], 403);
+    }
+
+
 
     public function api(Request $request)
     {
@@ -166,7 +221,7 @@ class StudentController extends Controller
         foreach ($datas as $data) {
             $formatted_data[] = [
                 "id" => $data->id,
-                "name" => $data->name
+                "text" => $data->name
             ];
         }
 
