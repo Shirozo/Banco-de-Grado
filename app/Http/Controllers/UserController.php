@@ -91,6 +91,17 @@ class UserController extends Controller
                 ], 404);
             }
 
+            $username = User::where([
+                ["username", "=", $request->update_username],
+                ["id", "!=", $request->id]
+            ])->first();
+
+            if ($username) {
+                return response()->json([
+                    "message" => "Username Already Taken!"
+                ], 403);
+            }
+
             $data = Validator::make($request->all(), [
                 "update_name" => "required|min:1",
                 "update_username" => "required|max:30",
@@ -117,18 +128,19 @@ class UserController extends Controller
                     "name" => $request->update_name,
                     "username" => $request->update_username,
                     "password" => $request->update_password,
-                    "type" => $request->update_type
+                    "user_type" => $request->update_type
                 ]);
             } else {
                 $prev_data->update([
                     "name" => $request->update_name,
                     "username" => $request->update_username,
-                    "type" => $request->update_type
+                    "user_type" => $request->update_type
                 ]);
             }
 
             return response()->json([
-                "message" => "User data updated!"
+                "message" => "User data updated!",
+                "type" => $request->update_type
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -174,7 +186,7 @@ class UserController extends Controller
         foreach ($datas as $data) {
             $formatted_data[] = [
                 "id" => $data->id,
-                "text" => $data->first_name . " " . $data->middle_name . " " . $data->last_name
+                "text" => $data->name
             ];
         }
 
