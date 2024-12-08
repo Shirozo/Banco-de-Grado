@@ -40,7 +40,7 @@
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header bg-transparent">
-                        <h3 class="mb-0" style="float: left;">Students</h3>
+                        <h3 class="mb-0" style="float: left;">Users</h3>
                         <a onclick="$('#addUser').modal('show')" class="button-34 button-35"><i class="fa fa-plus"></i>
                             ADD USER</a>
                     </div>
@@ -50,6 +50,7 @@
                                 <tr>
                                     <th style="width: 20%;" class="th-sm">Name</th>
                                     <th style="width: 20%;">Username</th>
+                                    <th style="width: 20%">Role</th>
                                     <th style="text-align: center; width: 10%!important" class="th-sm w-25">Action</th>
                                 </tr>
                             </thead>
@@ -58,6 +59,7 @@
                                     <tr>
                                         <td>{{ $usr->name }}</td>
                                         <td>{{ $usr->username }}</td>
+                                        <td>{{ $usr->user_type == 1 ? "Admin" : "Faculty" }}</td>
                                         <td style="text-align: center;">
                                             <a href="#updateUser" class="btn btn-sm btn-flat btn-user-data"
                                                 data-id="{{ $usr->id }}">
@@ -351,7 +353,13 @@
                             icon: "success",
                             button: "OK"
                         }).then(() => {
-                            window.location.reload();
+                            let user = "{{ Auth::user()->id }}"
+                            
+                            if (+update_type == 2 && (+user == +u_id)) {
+                                window.location.href = "{{ route('subject.show') }}"
+                            } else {
+                                window.location.reload();
+                            }
                         });
                     },
                     error: function(errr) {
