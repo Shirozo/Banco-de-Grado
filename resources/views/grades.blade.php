@@ -137,7 +137,7 @@
                                         }
                                     @endphp
                                     <tr>
-                                        <td>{{ $d->last_name }}, {{ $d->first_name }}</td>
+                                        <td>{{ $d->name }}</td>
                                         <td style="text-align: center">{{ $d->first_sem ? $d->first_sem : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $d->second_sem ? $d->second_sem : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $average }}</td>
@@ -377,25 +377,8 @@
                                 <th class="report-th">Average</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="report-tr">
-                                <td class="report-td" style="text-align: left">DAA</td>
-                                <td class="report-td">1.1</td>
-                                <td class="report-td">3.5</td>
-                                <td class="report-td">2.3</td>
-                            </tr>
-                            <tr class="report-tr">
-                                <td class="report-td" style="text-align: left">SE</td>
-                                <td class="report-td">1.1</td>
-                                <td class="report-td">3.5</td>
-                                <td class="report-td">2.3</td>
-                            </tr>
-                            <tr class="report-tr">
-                                <td class="report-td" style="text-align: left">Programming 1</td>
-                                <td class="report-td">1.1</td>
-                                <td class="report-td">3.5</td>
-                                <td class="report-td">2.3</td>
-                            </tr>
+                        <tbody id="grade-tbody">
+
                         </tbody>
                     </table>
                 </div>
@@ -454,7 +437,8 @@
                     success: function(response) {
                         error_m = ""
                         if (response.errors.length >= 1) {
-                            error_m = `Success but student error below:\n${response.errors.join(', ')}.`
+                            error_m =
+                                `Success but student error below:\n${response.errors.join(', ')}.`
                         }
                         swal({
                             title: "Success",
@@ -518,7 +502,6 @@
             })
 
             $("#status").on("change", function(e) {
-                console.log($(this).val());
 
                 if ($(this).val() == "dropped") {
                     $("#second_sem").attr('readonly', true);
@@ -535,23 +518,39 @@
                 if (id) {
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('grade.api') }}",
+                        url: "{{ route('student.dataApi') }}",
                         dataType: "json",
                         data: {
                             id: id,
-                            s_id: "{{ $subject->id }}"
+                            i_id: "{{ Auth::user()->id }}"
                         },
                         success: function(response) {
-                            $("#student-name").html(response.first_name + " " + response
-                                .middle_name +
-                                " " + response.last_name)
-                            $("#student-id").html(response.student_id);
+                            $("#student-name").html(response.personal.name)
+                            $("#student-id").html(response.personal.student_id);
                             $("#student-course").html(
-                                `<span class="fa fa-graduation-cap"></span > ${response.course}`
+                                `<span class="fa fa-graduation-cap"></span > ${response.personal.course}`
                             );
                             $("#student-year-sec").html(
-                                `<span class="fa fa-book-open"></span> ${response.year}-${response.section}`
+                                `<span class="fa fa-book-open"></span> ${response.personal.year}-${response.personal.section}`
                             )
+
+                            tr_data = ""
+                            response.grades.forEach(element => {
+                                let final_g = "No Grade"
+
+                                if (element.first_sem && element.second_sem) {
+                                    final_g = (element.first_sem + element.second_sem) / 2
+                                }
+                                tr_data += `
+                                <tr class="report-tr">
+                                    <td class="report-td" style="text-align: left">${element.subject_name}</td>
+                                    <td class="report-td">${element.first_sem ? element.first_sem : "No grade"}</td>
+                                    <td class="report-td">${element.second_sem ? element.second_sem : "No grade"}</td>
+                                    <td class="report-td">${final_g}</td>
+                                </tr>
+                             `
+                            });
+                            $("#grade-tbody").append(tr_data)
                             $('#studentGrade').modal('show')
                         }
                     })
@@ -628,8 +627,12 @@
                         });
                     },
                     error: function(errr) {
-                        console.log(errr.responseJSON);
-
+                        swal({
+                            title: "Error",
+                            text: errr.responseJSON,
+                            icon: "error",
+                            button: "Close"
+                        })
                     }
                 })
             })
@@ -639,7 +642,7 @@
                 placeholder: "Enter one or more character!",
                 minimumInputLength: 1,
                 ajax: {
-                    url: "{{ route('user.api') }}",
+                    url: "{{ route('student.api') }}",
                     dataType: 'json',
                     data: function(data) {
                         return {
@@ -670,7 +673,6 @@
 
         function handleDrop(event) {
             event.preventDefault()
-            console.log(event.dataTransfer);
 
             const files = event.dataTransfer.files;
 
