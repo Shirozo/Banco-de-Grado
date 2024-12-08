@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 use function Termwind\render;
@@ -12,7 +13,7 @@ class SubjectController extends Controller
 {
     public function show(Request $request)
     {
-        $all = Subject::all();
+        $all = Subject::where("instructor_id", "=", Auth::user()->id)->get();
         return view("dashboard", [
             "subjects" => $all
         ]);
@@ -22,8 +23,6 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
 
-        // TODO: Add instructor ID to the data
-        
         $validate = Validator::make($request->all(), [
             "subject_name" => "required|max:50",
             "sy" => "required|max:9|min:9"
@@ -63,14 +62,17 @@ class SubjectController extends Controller
 
     public function destroy(Request $request)
     {
-        $data = Subject::find($request->delete_id);
+        if ($request->has("delete_id")) {
+            $data = Subject::find($request->delete_id);
 
-        if ($data != null) {
-            $data->delete();
-            return redirect()->route("subject.show");
-        } else {
-            // Add error code
-            return redirect()->route("subject.show");
+            if ($data != null) {
+                $data->delete();
+                return redirect()->route("subject.show");
+            } else {
+                // Add error code
+                return redirect()->route("subject.show");
+            }
         }
+        return redirect()->route("subject.show");
     }
 }
