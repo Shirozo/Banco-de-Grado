@@ -9,6 +9,7 @@ class Subject extends Model
     protected $fillable = [
         "subject_name",
         "instructor_name",
-        "school_year"
+        "school_year",
+        "instructor_id"
     ];
 }
