@@ -55,7 +55,9 @@ Route::group(["prefix" => "student", "as" => "student.", "middleware" => ['auth'
     
     Route::get("/find/id", [StudentController::class, "api"])->name("api");
 
-    Route::get("/data/all", [StudentController::class, "dataApi"])->name("dataApi");
+    Route::get("/data/per/subject", [StudentController::class, "dataApi"])->name("dataApi");
+
+    Route::get("/data/all", [StudentController::class, "all"])->name("all");
 
     Route::post("/store/data", [StudentController::class, "store"])->name("store");
 
