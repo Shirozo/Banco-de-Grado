@@ -25,9 +25,7 @@ class GradeController extends Controller
                         grades.id, 
                         grades.status, 
                         grades.student_id, 
-                        students.first_name, 
-                        students.last_name,
-                        students.middle_name
+                        students.name 
                     "))
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
@@ -57,7 +55,7 @@ class GradeController extends Controller
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
             ->whereRaw("status = 'active'")
-            ->whereRaw("grades.first_sem IS NULL OR grades.second_sem IS NULL")
+            ->whereRaw("grades.first_sem IS NULL AND grades.second_sem IS NULL")
             ->count();
 
         // Kuhaa an mga dropped
@@ -221,9 +219,7 @@ class GradeController extends Controller
         if ($request->has("id") && $request->has("s_id")) {
             $data = DB::table("grades")
                 ->select(DB::raw("
-                            students.first_name, 
-                            students.last_name,
-                            students.middle_name,
+                            students.name,
                             students.course,
                             students.student_id,
                             students.year,
@@ -289,7 +285,6 @@ class GradeController extends Controller
                                 ]);
                             }
                             array_push($errors, trim($d));
-                            
                         } else {
                             array_push($errors, trim($d));
                         }
