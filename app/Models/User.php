@@ -15,9 +15,7 @@ class User extends Authenticatable
 
 
     protected $searchableColumns = [
-        'first_name',
-        'last_name',
-        'middle_name'
+        'name',
     ];
 
     /**
@@ -29,6 +27,7 @@ class User extends Authenticatable
         'name',
         'username',
         'password',
+        'user_type'
     ];
 
     /**
