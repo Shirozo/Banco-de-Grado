@@ -46,7 +46,7 @@ class UserController extends Controller
                 "name" => $request->name,
                 "username" => $request->username,
                 "password" => $request->password,
-                "type" => $request->type
+                "user_type" => $request->type
             ]);
 
             return response()->json([
