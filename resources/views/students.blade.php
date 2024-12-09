@@ -366,17 +366,17 @@
                 id = $(this).data('id')
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('student.dataApi') }}",
+                    url: "{{ route('student.all') }}",
                     dataType: "json",
                     data: {
                         id: id,
                     },
                     success: function(response) {
-                        $("#update_name").val(response.data.name)
-                        $("#update_student_id").val(response.data.student_id);
-                        $("#update_course").val(response.data.course);
-                        $("#update_year").val(response.data.year)
-                        $("#update_section").val(response.data.section)
+                        $("#update_name").val(response.personal.name)
+                        $("#update_student_id").val(response.personal.student_id);
+                        $("#update_course").val(response.personal.course);
+                        $("#update_year").val(response.personal.year)
+                        $("#update_section").val(response.personal.section)
                         $("#s_id").val(id)
                         $('#updateStudent').modal('show')
                     }
