@@ -15,7 +15,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title text-uppercase mb-0" style="color:green !important;">Subjects</h5>
+                                        <h5 class="card-title text-uppercase mb-0" style="color:green !important;">Subjects
+                                        </h5>
                                         <span class="h2 font-weight-bold mb-0">0</span>
                                     </div>
                                 </div>
@@ -31,7 +32,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title text-uppercase  mb-0" style="color:green !important;">Enrolled Student</h5>
+                                        <h5 class="card-title text-uppercase  mb-0" style="color:green !important;">Enrolled
+                                            Student</h5>
                                         <span class="h2 font-weight-bold mb-0">0</span>
                                     </div>
                                 </div>
@@ -79,6 +81,8 @@
                                                 data-name="{{ $sb->subject_name }}">Edit</a>
                                             <a class="btn btn-danger btn-sm btn-flat delete"
                                                 data-id="{{ $sb->id }}">Delete</a>
+                                            <a href="{{ route('subject.report', ['id' => $sb->id]) }}" class="btn btn-info sheet btn-sm btn-flat"
+                                                data-action="2">Generate</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -196,6 +200,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             let table = new DataTable("#subjects");
 
+            $(".sheet").on("click", function() {
+                id = $(this).data("id")
+                action = $(this).data("action")
+                console.log(id, action);
+
+            })
 
             $('.edit').on('click', function() {
                 name = $(this).data('name')
