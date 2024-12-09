@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GradeExport;
+use App\Exports\GradeGeneration;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 use function Termwind\render;
 
@@ -36,7 +39,8 @@ class SubjectController extends Controller
 
         $subject = Subject::create([
             "subject_name" => $request->subject_name,
-            "school_year" => $request->sy
+            "school_year" => $request->sy,
+            "instructor_id" => Auth::user()->id
         ]);
 
         return redirect()->route("subject.show");
@@ -74,5 +78,9 @@ class SubjectController extends Controller
             }
         }
         return redirect()->route("subject.show");
+    }
+
+    public function generateReport($id, Request $request) {
+        return Excel::download(new GradeExport($id), 'Filename.xlsx');
     }
 }
