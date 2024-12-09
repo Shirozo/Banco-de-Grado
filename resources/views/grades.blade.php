@@ -550,7 +550,7 @@
                                 </tr>
                              `
                             });
-                            $("#grade-tbody").append(tr_data)
+                            $("#grade-tbody").html(tr_data)
                             $('#studentGrade').modal('show')
                         }
                     })
@@ -579,8 +579,7 @@
                         s_id: "{{ $subject->id }}"
                     },
                     success: function(response) {
-                        $("#fullname").val(response.first_name + " " + response.middle_name +
-                            " " + response.last_name)
+                        $("#fullname").val(response.name)
                         $("#first_sem").val(response.first_sem ? response.first_sem : 0);
                         $("#second_sem").val(response.second_sem ? response.second_sem : 0);
                         $("#grade_id").val(response.id)
@@ -629,7 +628,7 @@
                     error: function(errr) {
                         swal({
                             title: "Error",
-                            text: errr.responseJSON,
+                            text: errr.responseJSON.message,
                             icon: "error",
                             button: "Close"
                         })
