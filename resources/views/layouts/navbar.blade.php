@@ -194,7 +194,7 @@
                     </table>
                 </div>`
 
-                $("#dataHere").append(html)
+                $("#dataHere").html(html)
             }
         })
     }
