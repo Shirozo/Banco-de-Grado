@@ -127,8 +127,8 @@ class GradeController extends Controller
             }
 
             // Check if the first sem and second sem is in 0.1 - 0.9, return error
-            if (($request->first_sem >= .1 && $request->first_sem < 1) ||
-                ($request->second_sem >= .1 && $request->second_sem < 1)
+            if ((($request->first_sem >= .1 && $request->first_sem < 1) || $request->first_sem < 0 ) ||
+                (($request->second_sem >= .1 && $request->second_sem < 1) || $request->second_sem < 0)
             ) {
                 return response()->json([
                     "message" => "Invalid Grade Input!"
@@ -299,7 +299,7 @@ class GradeController extends Controller
                     "errors" => $errors
                 ], 200);
             } catch (\Throwable $th) {
-                return response()->json(['message' => 'Server Error!'], 403);
+                return response()->json(['message' => 'Server Error!'], 500);
             }
         } else {
             return response()->json(['message' => 'No file selected!'], 403);
