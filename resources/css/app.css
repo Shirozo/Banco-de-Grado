@@ -507,3 +507,31 @@ table>tbody>tr {
     max-height: 450px !important;
     overflow-y: scroll;
 }
+
+.login-index {
+    padding: 5% 1%;
+    width: 100px;
+    border: none;
+    outline: none;
+    border-radius: .2em;
+    color: green;
+    transition: all ease-in-out .5s;
+}
+
+.login-index:hover {
+    transform: scale(1.1);
+}
+
+.middle-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.middle-nav  p {
+    color: white;
+    font-family: "Kanit";
+    font-size: 20px;
+    width: 100%;
+    padding-top: 10px;
+}

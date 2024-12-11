@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->char("subject_name", 50);
             $table->char("school_year", 9);
+            $table->enum("semester", [1,2]);
             $table->foreignId("instructor_id")->constrained("users")->onDelete("cascade")->onUpdate("cascade");
             $table->char("report", 100)->nullable();
         });

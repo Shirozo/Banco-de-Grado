@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get("", );
+Route::get("/", [IndexController::class, "show"])->name("index");
+
+Route::get("/index/api", [IndexController::class, "api"])->name("api");
 
 Route::group(["prefix" => "subject", "as" => "subject.", "middleware" => ['auth']], function () {
 
@@ -68,6 +71,10 @@ Route::group(["prefix" => "student", "as" => "student.", "middleware" => ['auth'
     Route::get("/data/per/subject", [StudentController::class, "dataApi"])->name("dataApi");
 
     Route::get("/data/all", [StudentController::class, "all"])->name("all");
+
+    Route::get("/get/unique/sy", [StudentController::class, "unique_sy"])->name("sy");
+
+    Route::get("/generate/copy", [GradeController::class, "generate_copy"])->name("generate");
 
     Route::post("/upload/data", [StudentController::class, "upload"])->name("upload");
 });

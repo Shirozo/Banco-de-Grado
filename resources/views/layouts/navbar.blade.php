@@ -24,27 +24,66 @@
 <div class="modal fade" id="studentAllData">
     <div class="modal-dialog modal-lg" role="document">
         <form action="#" method="POST" id="studentAllDataModal">
-            @csrf
-            @method('delete')
             <div class="modal-content">
                 <div class="modal-header" style="justify-content: left !important;">
-                    <h5 class="modal-title"><span class="fa-regular fa-user" style="color: black"></span> Name GRADES
+                    <h5 class="modal-title" id="student_name">
+                        <span class="fa-regular fa-user" style="color: black"></span> Name
+                        GRADES
                     </h5>
                 </div>
                 <div class="modal-body" style="justify-content: left !important">
-                    <h3>Student ID:</h3>
-                    <h3>Course, Section & Year:</h3>
+                    <h3 id="s_id">Student ID:</h3>
+                    <h3 id="s_course_s_year">Course, Section & Year:</h3>
                 </div>
                 <div class="modal-title" style="margin-left: 1.25rem">GRADES</div>
                 <div class="modal-body grades-div" style="justify-content: left !important" id="dataHere">
 
                 </div>
                 <div class="modal-footer custom-footer" style="margin-top: 10px">
-                    <button type="submit" class="btn btn-success btn-flat" name="add"
+                    <button type="button" class="btn btn-success btn-flat" onclick="showOption()"
                         style="background-color: green">
                         DOWNLOAD</button>
                     <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
                         onclick="$('#studentAllData').modal('hide')"><i class="fa fa-close"></i> Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="selectRange">
+    <div class="modal-dialog" role="document">
+        <form action="#" method="POST" id="selectRan">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content: left !important;">
+                    <h5 class="modal-title">
+                        Select Range of Data
+                    </h5>
+                </div>
+                <div class="modal-body" style="justify-content: left !important">
+                    <input type="hidden" id="user_id">
+                    <div class="form-group has-feedback">
+                        <label for="sy_range">School Year:</label>
+                        <select name="sy_range" maxlength="50" class="form-control" required id="sy_range"
+                            placeholder="Select Semester">
+                        </select>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="sem_range">Semester:</label>
+                        <select name="sem_range" maxlength="50" class="form-control" required id="sem_range"
+                            placeholder="Select Semester">
+                            <option value="" selected>Select Semester</option>
+                            <option value="1">1</option>
+                            <option value="4">2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer custom-footer" style="margin-top: 10px">
+                    <button type="submit" class="btn btn-success btn-flat" onclick=""
+                        style="background-color: green">
+                        DOWNLOAD</button>
+                    <button type="button" class="btn btn-danger btn-flat pull-left btn-close-c"
+                        onclick="$('#selectRange').modal('hide')"><i class="fa fa-close"></i> Close</button>
                 </div>
             </div>
         </form>
@@ -69,6 +108,60 @@
                 $("#user-nav-action").removeClass('s-inactive')
                 $("#user-nav-action").addClass('active')
             }
+        });
+
+        $("#selectRan").on("submit", function(e) {
+            e.preventDefault();
+
+            var id = $("#user_id").val();
+            var sy_range = $("#sy_range").val();
+            var sem_range = $("#sem_range").val();
+
+            // Basic validation
+            if (!id || !sy_range || !sem_range) {
+                swal({
+                    title: "Error",
+                    text: "Please fill in all fields.",
+                    icon: "error",
+                    button: "Close"
+                });
+                return; // Stop execution if validation fails
+            }
+
+            // Create a form to submit the data
+            var form = $('<form>', {
+                action: "{{ route('student.generate') }}", // Your download route
+                method: 'GET'
+            });
+
+            // Append the data to the form
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'id',
+                value: id
+            }));
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'sy_range',
+                value: sy_range
+            }));
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'sem_range',
+                value: sem_range
+            }));
+
+            // Append the form to the body and submit it
+            $('body').append(form);
+            form.submit();
+
+            // Optionally, show a success message
+            swal({
+                title: "Success",
+                text: "Student Data Downloaded! Please check your downloads.",
+                icon: "success",
+                button: "Close"
+            });
         });
 
         $input.on('blur', function() {
@@ -103,6 +196,39 @@
         });
     })
 
+    function showOption() {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('student.sy') }}",
+            data: {
+                id: $("#user_id").val()
+            },
+            success: function(response) {
+                data = response.sy
+                if (data.length == 0) {
+                    swal({
+                        title: "Error",
+                        text: "Student has no Data!",
+                        icon: "error",
+                        button: "Close"
+                    })
+                } else {
+
+                    ht = "<option value="
+                    " selected>Select School Year</option>"
+                    for (let a = 0; a < data.length; a++) {
+                        d = data[a]
+                        ht += `
+                     <option value="${d.school_year}" selected>${d.school_year}</option>
+                    `
+                    }
+                    $("#sy_range").html(ht)
+                    $("#studentAllData").modal("hide")
+                    $("#selectRange").modal("show")
+                }
+            }
+        })
+    }
     /* https://www.w3schools.com/howto/howto_js_collapsible.asp */
     function collapse(btn) {
         btn.classList.toggle("active");
@@ -129,6 +255,14 @@
                 id: id
             },
             success: function(response) {
+                $("#student_name").html(
+                    `<span class="fa-regular fa-user" style="color: black"></span> ${response.personal.name} GRADES`
+                )
+                $("#user_id").val(response.personal.id)
+                $("#s_id").html(`Student ID: ${response.personal.student_id}`)
+                $("#s_course_s_year").html(
+                    `Course, Section & Year: ${response.personal.course} - ${response.personal.year}${response.personal.section}`
+                )
                 grades = response.grades
                 html = ""
                 sy = []
@@ -167,8 +301,7 @@
 
                     if (first_sem == "No Grade" && second_sem == "No Grade") {
                         average = "No Grade"
-                    }
-                    else {
+                    } else {
                         average = (grade.first_sem + grade.second_sem) / 2
                     }
 

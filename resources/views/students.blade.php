@@ -1,10 +1,6 @@
 @extends('layouts.base')
 
-@section('title', 'Dashboard')
-
-@section('back')
-    <a href="{{ route('subject.show') }}" class="fa fa-arrow-left fa-xl"></a>
-@endsection
+@section('title', 'Student')
 
 @section('main')
     <div class="header pb-8 pt-5">

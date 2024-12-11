@@ -192,7 +192,7 @@ class StudentController extends Controller
                 )->where('grades.student_id', $request->id)
                 ->orderBy('subjects.school_year')
                 ->get();
-                
+
             return response()->json([
                 "personal" => $personal,
                 "grades" => $grades
@@ -202,6 +202,22 @@ class StudentController extends Controller
         return response()->json([
             "message" => "Can't find student data!"
         ], 403);
+    }
+
+    public function unique_sy(Request $request)
+    {
+
+        $schoolYears = DB::table('grades')
+            ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
+            ->select('subjects.school_year')
+            ->where('grades.student_id', $request->id)
+            ->distinct()
+            ->orderBy('subjects.school_year')
+            ->get();
+
+        return response()->json([
+            "sy" => $schoolYears
+        ]);
     }
 
 

@@ -11,6 +11,7 @@ class Subject extends Model
         "instructor_name",
         "school_year",
         "instructor_id",
-        "report"
+        "report",
+        "semester"
     ];
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Subject;
+use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,8 @@ class GradeController extends Controller
                         grades.id, 
                         grades.status, 
                         grades.student_id, 
-                        students.name 
+                        students.name,
+                        (grades.first_sem + grades.second_sem) / 2 AS average
                     "))
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
@@ -46,9 +48,10 @@ class GradeController extends Controller
             ->count();
 
         //  Kuhaa an mga failed
-        $failed = $baseQuery->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
-            ->whereRaw("((grades.first_sem + grades.second_sem) / 2) > 3")
-            ->count();
+        $failed = DB::table('grades')
+            ->select(DB::raw('COUNT(*) as count'))
+            ->whereRaw('(first_sem + second_sem) / 2 > ?', [3])
+            ->value('count');
 
         // Kuhaa an wara grade
         $no_grades = DB::table("grades")
@@ -127,7 +130,7 @@ class GradeController extends Controller
             }
 
             // Check if the first sem and second sem is in 0.1 - 0.9, return error
-            if ((($request->first_sem >= .1 && $request->first_sem < 1) || $request->first_sem < 0 ) ||
+            if ((($request->first_sem >= .1 && $request->first_sem < 1) || $request->first_sem < 0) ||
                 (($request->second_sem >= .1 && $request->second_sem < 1) || $request->second_sem < 0)
             ) {
                 return response()->json([
@@ -284,7 +287,6 @@ class GradeController extends Controller
                                     "subject_id" => $request->subject_id
                                 ]);
                             }
-                            array_push($errors, trim($d));
                         } else {
                             array_push($errors, trim($d));
                         }
@@ -304,5 +306,110 @@ class GradeController extends Controller
         } else {
             return response()->json(['message' => 'No file selected!'], 403);
         }
+    }
+
+    public function generate_copy(Request $request)
+    {
+        if ($request->has("id")) {
+            $personal = Student::find($request->id);
+
+            if (!$personal) {
+                return response()->json([
+                    "message" => "Student Don't Exist!"
+                ], 200);
+            }
+
+            $grades = DB::table('grades')
+                ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
+                ->select(
+                    'grades.id',
+                    'grades.first_sem',
+                    'grades.second_sem',
+                    'subjects.subject_name',
+                    'subjects.school_year',
+                    'subjects.semester'
+                )->where([
+                    ['grades.student_id', "=", $request->id],
+                    ['subjects.school_year', "=", $request->sy_range],
+                    ['subjects.semester', "=", $request->sem_range]
+                ])
+                ->orderBy('subjects.school_year')
+                ->get();
+
+            if ($grades) {
+                $file = new ParentsCopy(data: $grades, personal: $personal);
+                $file->AddPage();
+                $file->makeReport();
+                $output = $file->Output('S');
+                Storage::put('reports/1.pdf', $output);
+            }
+
+            return response($output, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="student_report.pdf"');
+        }
+
+        return response()->json([
+            "message" => "Can't find student data!"
+        ], 403);
+    }
+}
+
+class ParentsCopy extends Fpdf
+{
+    public $data;
+    public $personal;
+
+
+    public function __construct($orientation = 'L', $unit = 'mm', $format = "Letter", $personal = null, $data = null)
+    {
+        parent::__construct($orientation, $unit, $format);
+        $this->data = $data;
+        $this->personal = $personal;
+    }
+
+    public function makereport()
+    {
+        $this->SetFont('Helvetica', '', 12);
+        $this->Image(public_path("images/bg.png"), 0, 0, 290, 207);
+
+        $this->Cell(70, 0, 'Name: ' . $this->personal->name, align: 'L');
+        $this->Cell(70, 0, "Year:" . $this->personal->year, align: 'C');
+        $this->Cell(70, 0, 'Name: ' . $this->personal->name, align: 'L');
+        $this->Cell(20, 0, "Year:" . $this->personal->year, align: 'C');
+        $this->Ln(7);
+        $this->Cell(70, 0, 'Student ID: ' . $this->personal->student_id, align: 'L');
+        $this->Cell(70, 0, "Section: " . $this->personal->section, align: 'C');
+        $this->Cell(40, 0, 'Student ID: ' . $this->personal->student_id, align: 'L');
+        $this->Cell(75, 0, "Section: " . $this->personal->section, align: 'C');
+        $this->Ln(5);
+        $this->Cell(70, 0, 'Course:', align: 'L');
+        $this->Ln(5);
+        $this->Line(10, $this->GetY(), 260, $this->GetY());
+        $this->Ln(5);
+        $this->Cell(25, 0, 'Subject: ', align: 'L');
+        $this->Cell(25, 0, "First Sem", align: 'C');
+        $this->Cell(30, 0, 'Second Sem ', align: 'C');
+        $this->Cell(55, 0, "Average", align: 'C');
+        $this->Cell(25, 0, 'Subject: ', align: 'L');
+        $this->Cell(25, 0, "First Sem", align: 'C');
+        $this->Cell(30, 0, 'Second Sem ', align: 'C');
+        $this->Cell(25, 0, "Average", align: 'C');
+        $this->Ln(5);
+        foreach ($this->data as $d) {
+            $this->Cell(25, 0, $d->subject_name, align: 'L');
+            $this->Cell(25, 0, $d->first_sem == 0 ? "N/A" : $d->first_sem, align: 'C');
+            $this->Cell(30, 0, $d->second_sem == 0 ? "N/A" : $d->second_sem, align: 'C');
+            $this->Cell(55, 0, ($d->first_sem + $d->second_sem) / 2 == 0 ? "N/A" : ($d->first_sem + $d->second_sem) / 2, align: 'C');
+            $this->Cell(25, 0, $d->subject_name, align: 'L');
+            $this->Cell(25, 0, $d->first_sem == 0 ? "N/A" : $d->first_sem, align: 'C');
+            $this->Cell(30, 0, $d->second_sem == 0 ? "N/A" : $d->second_sem, align: 'C');
+            $this->Cell(25, 0, ($d->first_sem + $d->second_sem) / 2 == 0 ? "N/A" : ($d->first_sem + $d->second_sem) / 2, align: 'C');
+            $this->Ln(5);
+        }
+
+        $this->Ln(20);
+        $this->Line(30, $this->GetY(), 110, $this->GetY());
+        $this->Cell(120, 10, 'Parents Signature Over Printed Name', 0, 1, 'C'); // Centered cell at the bottom
     }
 }
