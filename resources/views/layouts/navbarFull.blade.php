@@ -8,8 +8,11 @@
     </div>
     <div class="nav-right">
         <a href="{{ route('loginPage') }}">
-            <button class="login-index">Log In</button>
+            @if (Auth::user())
+                <button class="login-index">Dashboard</button>
+            @else
+                <button class="login-index">Log In</button>
+            @endif
         </a>
     </div>
 </nav>
-
