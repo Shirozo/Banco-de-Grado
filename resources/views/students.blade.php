@@ -132,8 +132,13 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="section">Section:</label>
-                            <input type="text" name="section" maxlength="1" class="form-control" required
-                                id="section" placeholder="Section">
+                            <select name="section" class="form-control" required id="section" placeholder="Section">
+                                <option value="" selected>-------</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -237,8 +242,14 @@
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
                             <label for="update_section">Section:</label>
-                            <input type="text" name="update_section" maxlength="1" class="form-control" required
-                                id="update_section" placeholder="Section">
+                            <select name="update_section" class="form-control" required id="update_section"
+                                placeholder="Section">
+                                <option value="" selected>-------</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -357,8 +368,8 @@
 
             })
 
-            $(".btn-user-data").on("click", function() {
-
+            $(".btn-user-data").on("click", function(e) {
+                e.preventDefault()
                 id = $(this).data('id')
                 $.ajax({
                     type: "GET",
