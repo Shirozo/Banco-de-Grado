@@ -28,6 +28,7 @@ class SubjectController extends Controller
             )
             ->leftJoin('grades', 'subjects.id', '=', 'grades.subject_id')
             ->groupBy('subjects.id', 'subjects.subject_name')
+            ->where('subjects.instructor_id', Auth::user()->id)
             ->get();
 
         $uniqueStudents = DB::table('students')
@@ -50,7 +51,7 @@ class SubjectController extends Controller
         try {
             $validate = Validator::make($request->all(), [
                 "subject_name" => "required|max:50",
-                "semester" => "required|in:1,2",
+                "semester" => "required|in:1,2,3",
                 "sy" => "required|max:9|min:9"
             ]);
 
@@ -84,7 +85,7 @@ class SubjectController extends Controller
         $validate = Validator::make($request->all(), [
             "edit_subject_name" => "required|max:50",
             "edit_id" => "required|numeric",
-            "edit_semester" => "required|in:1,2",
+            "edit_semester" => "required|in:1,2,3",
             "edit_sy" => "required|max:9|min:9"
         ]);
 
