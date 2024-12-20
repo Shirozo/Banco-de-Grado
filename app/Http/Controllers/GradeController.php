@@ -21,13 +21,13 @@ class GradeController extends Controller
 
         $data = DB::table("grades")
             ->select(DB::raw("
-                        grades.first_sem,
-                        grades.second_sem,
+                        grades.midterm,
+                        grades.final,
                         grades.id, 
                         grades.status, 
                         grades.student_id, 
                         students.name,
-                        (grades.first_sem + grades.second_sem) / 2 AS average
+                        (grades.midterm + grades.final) / 2 AS average
                     "))
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
@@ -41,14 +41,14 @@ class GradeController extends Controller
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
             ->whereRaw("status = 'active'")
-            ->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
-            ->whereRaw("((grades.first_sem + grades.second_sem) / 2) BETWEEN 1 AND 3")
+            ->whereRaw("grades.midterm >= 1 AND grades.final >= 1")
+            ->whereRaw("((grades.midterm + grades.final) / 2) BETWEEN 1 AND 3")
             ->count();
 
         //  Kuhaa an mga failed
         $failed = DB::table('grades')
             ->select(DB::raw('COUNT(*) as count'))
-            ->whereRaw('(first_sem + second_sem) / 2 > ?', [3])
+            ->whereRaw('(midterm + final) / 2 > ?', [3])
             ->where("grades.subject_id", "=", $id)
             ->where('status', 'active')
             ->value('count');
@@ -58,7 +58,7 @@ class GradeController extends Controller
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
             ->whereRaw("status = 'active'")
-            ->whereRaw("grades.first_sem IS NULL AND grades.second_sem IS NULL")
+            ->whereRaw("grades.midterm IS NULL AND grades.final IS NULL")
             ->count();
 
         // Kuhaa an mga dropped
@@ -130,8 +130,8 @@ class GradeController extends Controller
             }
 
             // Check if the first sem and second sem is in 0.1 - 0.9, return error
-            if ((($request->first_sem >= .1 && $request->first_sem < 1) || $request->first_sem < 0) ||
-                (($request->second_sem >= .1 && $request->second_sem < 1) || $request->second_sem < 0)
+            if ((($request->midterm >= .1 && $request->midterm < 1) || $request->midterm < 0) ||
+                (($request->final >= .1 && $request->final < 1) || $request->final < 0)
             ) {
                 return response()->json([
                     "message" => "Invalid Grade Input!"
@@ -143,8 +143,8 @@ class GradeController extends Controller
             $validation = Validator::make($request->all(), [
                 "fullname" => "required",
                 "status" => "required",
-                "first_sem" => "required|numeric",
-                "second_sem" => "required|numeric"
+                "midterm" => "required|numeric",
+                "final" => "required|numeric"
             ]);
 
             // Return error if validation fails
@@ -154,8 +154,8 @@ class GradeController extends Controller
                 ], 403);
             }
 
-            $first_sem = $request->first_sem == 0 ? null : $request->first_sem;
-            $second_sem = $request->second_sem == 0 ? null : $request->second_sem;
+            $midterm = $request->midterm == 0 ? null : $request->midterm;
+            $final = $request->final == 0 ? null : $request->final;
 
             $data = Grade::find($request->grade_id);
 
@@ -164,8 +164,8 @@ class GradeController extends Controller
                 // Update if there's a record
                 $data->update([
                     "status" => $request->status,
-                    "first_sem" => $first_sem,
-                    "second_sem" => $second_sem,
+                    "midterm" => $midterm,
+                    "final" => $final,
                     "status" => $request->status
                 ]);
 
@@ -227,8 +227,8 @@ class GradeController extends Controller
                             students.student_id,
                             students.year,
                             students.section,
-                            grades.first_sem,
-                            grades.second_sem,
+                            grades.midterm,
+                            grades.final,
                             grades.id, 
                             grades.status
                         "))
@@ -324,8 +324,8 @@ class GradeController extends Controller
                 ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
                 ->select(
                     'grades.id',
-                    'grades.first_sem',
-                    'grades.second_sem',
+                    'grades.midterm',
+                    'grades.final',
                     'subjects.subject_name',
                     'subjects.school_year',
                     'subjects.semester'
@@ -399,13 +399,13 @@ class ParentsCopy extends Fpdf
         $this->Ln(5);
         foreach ($this->data as $d) {
             $this->Cell(25, 0, $d->subject_name, align: 'L');
-            $this->Cell(25, 0, $d->first_sem == 0 ? "N/A" : $d->first_sem, align: 'C');
-            $this->Cell(30, 0, $d->second_sem == 0 ? "N/A" : $d->second_sem, align: 'C');
-            $this->Cell(55, 0, ($d->first_sem + $d->second_sem) / 2 == 0 ? "N/A" : ($d->first_sem + $d->second_sem) / 2, align: 'C');
+            $this->Cell(25, 0, $d->midterm == 0 ? "N/A" : $d->midterm, align: 'C');
+            $this->Cell(30, 0, $d->final == 0 ? "N/A" : $d->final, align: 'C');
+            $this->Cell(55, 0, ($d->midterm + $d->final) / 2 == 0 ? "N/A" : ($d->midterm + $d->final) / 2, align: 'C');
             $this->Cell(25, 0, $d->subject_name, align: 'L');
-            $this->Cell(25, 0, $d->first_sem == 0 ? "N/A" : $d->first_sem, align: 'C');
-            $this->Cell(30, 0, $d->second_sem == 0 ? "N/A" : $d->second_sem, align: 'C');
-            $this->Cell(25, 0, ($d->first_sem + $d->second_sem) / 2 == 0 ? "N/A" : ($d->first_sem + $d->second_sem) / 2, align: 'C');
+            $this->Cell(25, 0, $d->midterm == 0 ? "N/A" : $d->midterm, align: 'C');
+            $this->Cell(30, 0, $d->final == 0 ? "N/A" : $d->final, align: 'C');
+            $this->Cell(25, 0, ($d->midterm + $d->final) / 2 == 0 ? "N/A" : ($d->midterm + $d->final) / 2, align: 'C');
             $this->Ln(5);
         }
 
