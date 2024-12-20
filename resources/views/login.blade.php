@@ -17,7 +17,7 @@
 <body class="">
     <nav class="navbar-main">
         <div class="nav-title">
-            <h1>Banco De Grado</h1>
+            <a href="/" ><h1 style="color: #F4D22E !important;">Banco De Grado</h1></a>
         </div>
     </nav>
     <div class="login-main-content">
