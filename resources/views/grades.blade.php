@@ -127,7 +127,10 @@
                             <tbody>
                                 @foreach ($data as $d)
                                     @php
-                                        if ($d->midterm && $d->final) {
+                                        if ($d->midterm == "INC" || $d->final == "INC") {
+                                            $average = 'Incomplete';
+                                        }
+                                        elseif ($d->midterm && $d->final) {
                                             $average =
                                                 ($d->midterm + $d->final) / 2 ? ($d->midterm + $d->final) / 2 : 'N/A';
                                         } else {
@@ -140,7 +143,9 @@
                                         <td style="text-align: center">{{ $d->final ? $d->final : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $average }}</td>
                                         <td style="text-align: center">
-                                            @if (!$d->midterm || !$d->final)
+                                            @if ($d->midterm == 'INC' || $d->final == 'INC')
+                                                <b class="remark no_grade">INC</b>
+                                            @elseif (!$d->midterm || !$d->final)
                                                 <b class="remark no_grade">NO GRADE</b>
                                             @else
                                                 @if ($average == 'N/A')
@@ -280,7 +285,7 @@
                         <div class="form-group has-feedback">
                             <label for="midterm">Midterm:</label>
                             <input type="text" name="midterm" maxlength="3" class="form-control" required
-                            id="midterm">
+                                id="midterm">
                             <span class="text-danger" id="midterm-error"></span>
                         </div>
                         <div class="form-group has-feedback">
@@ -619,6 +624,10 @@
                         tr_data = ""
                         response.grades.forEach(element => {
                             let final_g = "No Grade"
+
+                            if (element.midterm == "INC" || element.final == "INC") {
+                                final_g = "Incomplete"
+                            }
 
                             if (element.midterm && element.final) {
                                 final_g = (element.midterm + element.final) / 2
