@@ -130,21 +130,30 @@ class GradeController extends Controller
             }
 
             // Check if the first sem and second sem is in 0.1 - 0.9, return error
-            if ((($request->midterm >= .1 && $request->midterm < 1) || $request->midterm < 0) ||
-                (($request->final >= .1 && $request->final < 1) || $request->final < 0)
-            ) {
-                return response()->json([
-                    "message" => "Invalid Grade Input!"
-                ], 403);
+            if ($request->midterm != "INC") {
+                if (($request->midterm >= .1 && $request->midterm < 1) || $request->midterm < 0) {
+                    return response()->json([
+                        "message" => "Midterm Grade Invalid!"
+                    ], 403);
+                }
             }
+
+            if ($request->final != "INC") {
+                if (($request->final >= .1 && $request->final < 1) || $request->final < 0) {
+                    return response()->json([
+                        "message" => "Final Grade Invalid!"
+                    ], 403);
+                }
+            }
+
 
 
             // Validate the data
             $validation = Validator::make($request->all(), [
                 "fullname" => "required",
                 "status" => "required",
-                "midterm" => "required|numeric",
-                "final" => "required|numeric"
+                "midterm" => "required",
+                "final" => "required"
             ]);
 
             // Return error if validation fails
