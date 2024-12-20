@@ -216,6 +216,8 @@
                 value: sem_range
             }));
 
+            console.log(form);
+
             // Append the form to the body and submit it
             $('body').append(form);
             form.submit();
@@ -230,6 +232,7 @@
         });
 
         $(".changeData").on("change", function() {
+
             course = $("#course").val()
             year = $("#year").val()
             section = $("#section").val()
@@ -288,12 +291,11 @@
                     })
                 } else {
 
-                    ht = "<option value="
-                    " selected>Select School Year</option>"
+                    ht = `<option value="" selected>Select School Year</option>`
                     for (let a = 0; a < data.length; a++) {
                         d = data[a]
                         ht += `
-                     <option value="${d.school_year}" selected>${d.school_year}</option>
+                     <option value="${d.school_year}">${d.school_year}</option>
                     `
                     }
                     $("#sy_range").html(ht)
@@ -320,39 +322,49 @@
     }
 
     function studentData(id) {
-        $("#studentAllData").modal("show")
+        u = "{{ Auth::user() }}"
+        if (u.length == 0) {
+            swal({
+                title: "Error",
+                text: "Not Permitted.",
+                icon: "error",
+                button: "Close"
+            });
+        } else {
 
-        $.ajax({
-            type: "GET",
-            url: "{{ route('student.all') }}",
-            data: {
-                id: id
-            },
-            success: function(response) {
-                $("#student_name").html(
-                    `<span class="fa-regular fa-user" style="color: black"></span> ${response.personal.name} GRADES`
-                )
-                $("#user_id").val(response.personal.id)
-                $("#s_id").html(`Student ID: ${response.personal.student_id}`)
-                $("#s_course_s_year").html(
-                    `Course, Section & Year: ${response.personal.course} - ${response.personal.year}${response.personal.section}`
-                )
-                grades = response.grades
-                html = ""
-                sy = []
+            $("#studentAllData").modal("show")
 
-                for (let i = 0; i < grades.length; i++) {
-                    grade = grades[i]
-                    if (!sy.includes(grade.school_year.trim())) {
+            $.ajax({
+                type: "GET",
+                url: "{{ route('student.all') }}",
+                data: {
+                    id: id
+                },
+                success: function(response) {
+                    $("#student_name").html(
+                        `<span class="fa-regular fa-user" style="color: black"></span> ${response.personal.name} GRADES`
+                    )
+                    $("#user_id").val(response.personal.id)
+                    $("#s_id").html(`Student ID: ${response.personal.student_id}`)
+                    $("#s_course_s_year").html(
+                        `Course, Section & Year: ${response.personal.course} - ${response.personal.year}${response.personal.section}`
+                    )
+                    grades = response.grades
+                    html = ""
+                    sy = []
 
-                        if (html.length != 0) {
-                            html += `
+                    for (let i = 0; i < grades.length; i++) {
+                        grade = grades[i]
+                        if (!sy.includes(grade.school_year.trim())) {
+
+                            if (html.length != 0) {
+                                html += `
                                     </tbody>
                                 </table>
                             </div>
                             `
-                        }
-                        html += `
+                            }
+                            html += `
                             <div class="school-year">
                                 <button type="button" onclick="collapse(this)" class="collapsible">
                                     ${grade.school_year} <span class="fa fa-plus" style="float: right"></span>
@@ -368,25 +380,25 @@
                                             </tr>
                                         </thead>
                                         <tbody>`;
-                        sy.push(grade.school_year.trim())
-                    }
-                    first_sem = grade.first_sem ? grade.first_sem : "No Grade"
-                    second_sem = grade.second_sem ? grade.second_sem : "No Grade"
+                            sy.push(grade.school_year.trim())
+                        }
+                        first_sem = grade.first_sem ? grade.first_sem : "No Grade"
+                        second_sem = grade.second_sem ? grade.second_sem : "No Grade"
 
-                    if (first_sem == "No Grade" && second_sem == "No Grade") {
-                        average = "No Grade"
-                    } else {
-                        average = (grade.first_sem + grade.second_sem) / 2
-                    }
+                        if (first_sem == "No Grade" && second_sem == "No Grade") {
+                            average = "No Grade"
+                        } else {
+                            average = (grade.first_sem + grade.second_sem) / 2
+                        }
 
-                    if (average > 3) {
-                        remark = `<td class="failed" style="width: 10%; text-align:center;">FAILED</td>`
-                    } else if (average < 3) {
-                        remark = `<td class="passed" style="width: 10%; text-align:center;">PASSED</td>`
-                    } else {
-                        remark = `<td style="width: 10%; text-align:center;">No Grade!</td>`
-                    }
-                    html += `
+                        if (average > 3) {
+                            remark = `<td class="failed" style="width: 10%; text-align:center;">FAILED</td>`
+                        } else if (average < 3) {
+                            remark = `<td class="passed" style="width: 10%; text-align:center;">PASSED</td>`
+                        } else {
+                            remark = `<td style="width: 10%; text-align:center;">No Grade!</td>`
+                        }
+                        html += `
                         <tr>
                             <td style="width: 50%; text-align:center;">${grade.subject_name}</td>
                             <td style="width: 15%; text-align:center;">${first_sem}</td>
@@ -395,15 +407,17 @@
                             ${remark}
                         </tr>
                     `
-                }
-                html += `
+                    }
+                    html += `
                         </tbody>
                     </table>
                 </div>`
 
-                $("#dataHere").html(html)
-            }
-        })
+                    $("#dataHere").html(html)
+                }
+            })
+        }
+
     }
 </script>
 
