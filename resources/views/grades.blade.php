@@ -278,16 +278,14 @@
                             </select>
                         </div>
                         <div class="form-group has-feedback">
-                            @error('midterm')
-                                <span class="text-danger"> {{ $message }} </span>
-                            @enderror
                             <label for="midterm">Midterm:</label>
                             <input type="text" name="midterm" maxlength="3" class="form-control" required
-                                id="midterm">
+                            id="midterm">
+                            <span class="text-danger" id="midterm-error"></span>
                         </div>
                         <div class="form-group has-feedback">
                             @error('final')
-                                <span class="text-danger"> {{ $message }} </span>
+                                <span class="text-danger" id="final-error"> {{ $message }} </span>
                             @enderror
                             <label for="final">Final:</label>
                             <input type="text" name="final" maxlength="3" class="form-control" required
@@ -516,36 +514,49 @@
                 g_id = $("#grade_id").val()
                 fullname = $("#fullname").val()
 
-                $.ajax({
-                    type: "PUT",
-                    url: "{{ route('grade.update') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        fullname: fullname,
-                        grade_id: g_id,
-                        status: status,
-                        midterm: midterm,
-                        final: final
-                    },
-                    success: function(response) {
-                        swal({
-                            title: "Success",
-                            text: "Data Updated",
-                            icon: "success",
-                            button: "OK"
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    },
-                    error: function(errr) {
-                        swal({
-                            title: "Error",
-                            text: errr.responseJSON.message,
-                            icon: "error",
-                            button: "Close"
-                        })
+                if (!checkGrade(midterm) || !checkGrade(final)) {
+                    if (!checkGrade(midterm)) {
+                        console.log("HERE");
+
+                        $("#midterm-error").text('Accepted: INC, 0, 1.0 - 5.0')
                     }
-                })
+
+                    if (!checkGrade(midterm)) {
+
+                    }
+                } else {
+
+                    $.ajax({
+                        type: "PUT",
+                        url: "{{ route('grade.update') }}",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            fullname: fullname,
+                            grade_id: g_id,
+                            status: status,
+                            midterm: midterm,
+                            final: final
+                        },
+                        success: function(response) {
+                            swal({
+                                title: "Success",
+                                text: "Data Updated",
+                                icon: "success",
+                                button: "OK"
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        },
+                        error: function(errr) {
+                            swal({
+                                title: "Error",
+                                text: errr.responseJSON.message,
+                                icon: "error",
+                                button: "Close"
+                            })
+                        }
+                    })
+                }
             })
 
             $("#student_id").select2({
@@ -569,6 +580,16 @@
                 }
             })
         })
+
+        function checkGrade(grade) {
+            const acceptedValues = ['INC', '0'];
+            const numericPattern = /^(1(\.\d+)?|2(\.\d+)?|3(\.\d+)?|4(\.\d+)?|5(\.0+)?)$/;
+
+            if (acceptedValues.includes(grade) || numericPattern.test(grade)) {
+                return true
+            }
+            return false
+        }
 
         function deleteF(id) {
             $("#delete_id").val(id)
