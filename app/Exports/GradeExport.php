@@ -36,9 +36,9 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
     public function map($student): array
     {
         return [
-            $student->first_sem ? $student->first_sem : "No Grade",
-            $student->second_sem ? $student->second_sem : "No Grade",
-            ($student->first_sem + $student->second_sem) / 2,
+            $student->midterm ? $student->midterm : "No Grade",
+            $student->final ? $student->final : "No Grade",
+            ($student->midterm + $student->final) / 2,
         ];
     }
 
@@ -189,14 +189,14 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
                 $sheet->getStyle('A19:J19')->applyFromArray($borderStyle);
                 $grades = DB::table("grades")
                     ->select(DB::raw("
-                            grades.first_sem,
-                            grades.second_sem,
+                            grades.midterm,
+                            grades.final,
                             grades.id, 
                             grades.status, 
                             grades.student_id, 
                             students.name,
                             students.student_id as s_id,
-                            (grades.first_sem + grades.second_sem) / 2 AS average
+                            (grades.midterm + grades.final) / 2 AS average
                         "))
                     ->join("students", "grades.student_id", "=", "students.id")
                     ->where("grades.subject_id", "=", $this->id)
@@ -210,17 +210,17 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
                     $sheet->mergeCells($col_ro);
 
                     $sheet->setCellValue("F" . ($startRow), $grade->s_id); // Student number
-                    $sheet->setCellValue("G" . ($startRow), $grade->first_sem == 0 ? "N/A" : $grade->first_sem); // Midterm grade
-                    $sheet->setCellValue("H" . ($startRow), $grade->second_sem == 0 ? "N/A" : $grade->second_sem); // Final grade
-                    $sheet->setCellValue("I" . ($startRow), ($grade->first_sem + $grade->second_sem) / 2 == 0 ? "N/A" : ($grade->first_sem + $grade->second_sem) / 2); // Average
-                    $av = ($grade->first_sem + $grade->second_sem) / 2;
+                    $sheet->setCellValue("G" . ($startRow), $grade->midterm == 0 ? "N/A" : $grade->midterm); // Midterm grade
+                    $sheet->setCellValue("H" . ($startRow), $grade->final == 0 ? "N/A" : $grade->final); // Final grade
+                    $sheet->setCellValue("I" . ($startRow), ($grade->midterm + $grade->final) / 2 == 0 ? "N/A" : ($grade->midterm + $grade->final) / 2); // Average
+                    $av = ($grade->midterm + $grade->final) / 2;
                     if ($grade->status == "dropped") {
                         $sheet->setCellValue("J" . ($startRow), "DROPPED"); // Average
                     } else if ($av <= 3 && $av >= 1 ) {
                         $sheet->setCellValue("J" . ($startRow), "PASSED"); // Average
                     } else if ($av > 3) {
                         $sheet->setCellValue("J" . ($startRow), "FAILED"); // Average
-                    } else if ($grade->first_sem == null || $grade->first_sem == 0 || $grade->second_sem == null || $grade->second_sem == 0){
+                    } else if ($grade->midterm == null || $grade->midterm == 0 || $grade->final == null || $grade->final == 0){
                         $sheet->setCellValue("J" . ($startRow), "INC"); // Average
                     }
                     $sheet->getStyle('A' . $startRow . ":J" . $startRow)->getFont()->setBold(false)->setSize(11)->setName("Arial Narrow");
