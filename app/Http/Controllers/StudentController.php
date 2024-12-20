@@ -139,8 +139,8 @@ class StudentController extends Controller
                 ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
                 ->select(
                     'grades.id',
-                    'grades.first_sem',
-                    'grades.second_sem',
+                    'grades.midterm',
+                    'grades.final',
                     'subjects.subject_name',
                     'subjects.school_year'
                 )
@@ -185,8 +185,8 @@ class StudentController extends Controller
                 ->join('subjects', 'subjects.id', '=', 'grades.subject_id')
                 ->select(
                     'grades.id',
-                    'grades.first_sem',
-                    'grades.second_sem',
+                    'grades.midterm',
+                    'grades.final',
                     'subjects.subject_name',
                     'subjects.school_year'
                 )->where('grades.student_id', $request->id)
