@@ -27,7 +27,7 @@ class StudentController extends Controller
                 "student_id" => "required|max:8|min:8",
                 "course" => "required|max:50",
                 "year" => "required|integer",
-                "section" => "required|max:1"
+                "section" => "required|in:A,B,C,D"
             ]);
 
             if ($data->fails()) {
@@ -76,7 +76,7 @@ class StudentController extends Controller
                 "update_student_id" => "required|max:8|min:8",
                 "update_course" => "required|max:50",
                 "update_year" => "required|integer",
-                "update_section" => "required|max:1"
+                "update_section" => "required|in:A,B,C,D"
             ]);
 
             if ($data->fails()) {
