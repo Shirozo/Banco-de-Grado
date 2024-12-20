@@ -214,7 +214,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">UPLOAD STUDENT</h5>
+                        <h5 class="modal-title">UPLOAD GRADESHEET</h5>
                     </div>
                     <div class="modal-body">
                         <div id="form-div">
@@ -258,7 +258,7 @@
                 @method('put')
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">NEW STUDENT</h5>
+                        <h5 class="modal-title">UPDATE STUDENT DATA</h5>
                     </div>
                     <div class="modal-body">
                         <div class="form-group has-feedback">
