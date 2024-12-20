@@ -295,13 +295,13 @@
                                         <tbody>`;
                         sy.push(grade.school_year.trim())
                     }
-                    first_sem = grade.first_sem ? grade.first_sem : "No Grade"
-                    second_sem = grade.second_sem ? grade.second_sem : "No Grade"
+                    midterm = grade.midterm ? grade.midterm : "No Grade"
+                    finals = grade.finals ? grade.finals : "No Grade"
 
-                    if (first_sem == "No Grade" && second_sem == "No Grade") {
+                    if (midterm == "No Grade" && finals == "No Grade") {
                         average = "No Grade"
                     } else {
-                        average = (grade.first_sem + grade.second_sem) / 2
+                        average = (grade.midterm + grade.finals) / 2
                     }
 
                     if (average > 3) {
@@ -314,8 +314,8 @@
                     html += `
                         <tr>
                             <td style="width: 50%; text-align:center;">${grade.subject_name}</td>
-                            <td style="width: 15%; text-align:center;">${first_sem}</td>
-                            <td style="width: 15%; text-align:center;">${second_sem}</td>
+                            <td style="width: 15%; text-align:center;">${midterm}</td>
+                            <td style="width: 15%; text-align:center;">${finals}</td>
                             <td style="width: 15%; text-align:center;">${average}</td>
                             ${remark}
                         </tr>
