@@ -214,12 +214,11 @@
                     })
                 } else {
 
-                    ht = "<option value="
-                    " selected>Select School Year</option>"
+                    ht = `<option value="" selected>Select School Year</option>`
                     for (let a = 0; a < data.length; a++) {
                         d = data[a]
                         ht += `
-                     <option value="${d.school_year}" selected>${d.school_year}</option>
+                     <option value="${d.school_year}">${d.school_year}</option>
                     `
                     }
                     $("#sy_range").html(ht)
