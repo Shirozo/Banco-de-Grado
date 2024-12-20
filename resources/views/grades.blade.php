@@ -127,10 +127,10 @@
                             <tbody>
                                 @foreach ($data as $d)
                                     @php
-                                        if ($d->first_sem && $d->second_sem) {
+                                        if ($d->midterm && $d->finals) {
                                             $average =
-                                                ($d->first_sem + $d->second_sem) / 2
-                                                    ? ($d->first_sem + $d->second_sem) / 2
+                                                ($d->midterm + $d->finals) / 2
+                                                    ? ($d->midterm + $d->finals) / 2
                                                     : 'N/A';
                                         } else {
                                             $average = 'N/A';
@@ -138,11 +138,11 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $d->name }}</td>
-                                        <td style="text-align: center">{{ $d->first_sem ? $d->first_sem : 'N/A' }}</td>
-                                        <td style="text-align: center">{{ $d->second_sem ? $d->second_sem : 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $d->midterm ? $d->midterm : 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $d->finals ? $d->finals : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $average }}</td>
                                         <td style="text-align: center">
-                                            @if (!$d->first_sem || !$d->second_sem)
+                                            @if (!$d->midterm || !$d->finals)
                                                 <b class="remark no_grade">NO GRADE</b>
                                             @else
                                                 @if ($average == 'N/A')
@@ -279,18 +279,18 @@
                             </select>
                         </div>
                         <div class="form-group has-feedback">
-                            @error('first_sem')
+                            @error('midterm')
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
-                            <label for="first_sem">First Semester:</label>
-                            <input name="first_sem" maxlength="50" class="form-control" required id="first_sem">
+                            <label for="midterm">First Semester:</label>
+                            <input name="midterm" maxlength="50" class="form-control" required id="midterm">
                         </div>
                         <div class="form-group has-feedback">
-                            @error('second_sem')
+                            @error('finals')
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
-                            <label for="second_sem">Second Semester:</label>
-                            <input name="second_sem" maxlength="50" class="form-control" required id="second_sem">
+                            <label for="finals">Second Semester:</label>
+                            <input name="finals" maxlength="50" class="form-control" required id="finals">
                         </div>
                         <input type="hidden" name="grade_id" id="grade_id">
                     </div>
@@ -504,11 +504,11 @@
             $("#status").on("change", function(e) {
 
                 if ($(this).val() == "dropped") {
-                    $("#second_sem").attr('readonly', true);
-                    $("#first_sem").attr('readonly', true);
+                    $("#finals").attr('readonly', true);
+                    $("#midterm").attr('readonly', true);
                 } else {
-                    $("#second_sem").attr('readonly', false);
-                    $("#first_sem").attr('readonly', false);
+                    $("#finals").attr('readonly', false);
+                    $("#midterm").attr('readonly', false);
                 }
 
             })
@@ -538,14 +538,14 @@
                             response.grades.forEach(element => {
                                 let final_g = "No Grade"
 
-                                if (element.first_sem && element.second_sem) {
-                                    final_g = (element.first_sem + element.second_sem) / 2
+                                if (element.midterm && element.finals) {
+                                    final_g = (element.midterm + element.finals) / 2
                                 }
                                 tr_data += `
                                 <tr class="report-tr">
                                     <td class="report-td" style="text-align: left">${element.subject_name}</td>
-                                    <td class="report-td">${element.first_sem ? element.first_sem : "No grade"}</td>
-                                    <td class="report-td">${element.second_sem ? element.second_sem : "No grade"}</td>
+                                    <td class="report-td">${element.midterm ? element.midterm : "No grade"}</td>
+                                    <td class="report-td">${element.finals ? element.finals : "No grade"}</td>
                                     <td class="report-td">${final_g}</td>
                                 </tr>
                              `
@@ -580,16 +580,16 @@
                     },
                     success: function(response) {
                         $("#fullname").val(response.name)
-                        $("#first_sem").val(response.first_sem ? response.first_sem : 0);
-                        $("#second_sem").val(response.second_sem ? response.second_sem : 0);
+                        $("#midterm").val(response.midterm ? response.midterm : 0);
+                        $("#finals").val(response.finals ? response.finals : 0);
                         $("#grade_id").val(response.id)
                         $("#status").val(response.status)
                         if (response.status == "dropped") {
-                            $("#second_sem").attr('readonly', true);
-                            $("#first_sem").attr('readonly', true);
+                            $("#finals").attr('readonly', true);
+                            $("#midterm").attr('readonly', true);
                         } else {
-                            $("#second_sem").attr('readonly', false);
-                            $("#first_sem").attr('readonly', false);
+                            $("#finals").attr('readonly', false);
+                            $("#midterm").attr('readonly', false);
                         }
                         $('#updateStudent').modal('show')
                     }
@@ -598,8 +598,8 @@
 
             $("#update_form").on("submit", (e) => {
                 e.preventDefault();
-                first_sem = $("#first_sem").val()
-                second_sem = $("#second_sem").val()
+                midterm = $("#midterm").val()
+                finals = $("#finals").val()
                 status = $("#status").val()
                 g_id = $("#grade_id").val()
                 fullname = $("#fullname").val()
@@ -612,8 +612,8 @@
                         fullname: fullname,
                         grade_id: g_id,
                         status: status,
-                        first_sem: first_sem,
-                        second_sem: second_sem
+                        midterm: midterm,
+                        finals: finals
                     },
                     success: function(response) {
                         swal({
