@@ -36,14 +36,12 @@ class GradeController extends Controller
         // Retreive subject data
         $subject = Subject::find($id);
 
-        $baseQuery = DB::table("grades")
+        // Kuhaa an mga pinasar
+        $passed = DB::table("grades")
             ->join("students", "grades.student_id", "=", "students.id")
             ->where("grades.subject_id", "=", $id)
-            ->whereRaw("status = 'active'");
-
-
-        // Kuhaa an mga pinasar
-        $passed = $baseQuery->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
+            ->whereRaw("status = 'active'")
+            ->whereRaw("grades.first_sem >= 1 AND grades.second_sem >= 1")
             ->whereRaw("((grades.first_sem + grades.second_sem) / 2) BETWEEN 1 AND 3")
             ->count();
 
@@ -51,6 +49,8 @@ class GradeController extends Controller
         $failed = DB::table('grades')
             ->select(DB::raw('COUNT(*) as count'))
             ->whereRaw('(first_sem + second_sem) / 2 > ?', [3])
+            ->where("grades.subject_id", "=", $id)
+            ->where('status', 'active')
             ->value('count');
 
         // Kuhaa an wara grade
@@ -272,34 +272,35 @@ class GradeController extends Controller
                 $errors = [];
 
                 foreach ($data as $d) {
-                    try {
-                        $student =  Student::where("student_id", "=", trim($d))->first();
+                    dump($d);
+                    // try {
+                    //     $student =  Student::where("student_id", "=", trim($d))->first();
 
-                        if ($student != null) {
-                            $has_data = Grade::where([
-                                ["student_id", "=", $student->id],
-                                ["subject_id", "=", $request->subject_id]
-                            ])->first();
+                    //     if ($student != null) {
+                    //         $has_data = Grade::where([
+                    //             ["student_id", "=", $student->id],
+                    //             ["subject_id", "=", $request->subject_id]
+                    //         ])->first();
 
-                            if ($has_data == null) {
-                                Grade::create([
-                                    "student_id" => $student->id,
-                                    "subject_id" => $request->subject_id
-                                ]);
-                            }
-                        } else {
-                            array_push($errors, trim($d));
-                        }
-                    } catch (\Throwable $th) {
-                        array_push($errors, trim($d));
-                    }
+                    //         if ($has_data == null) {
+                    //             Grade::create([
+                    //                 "student_id" => $student->id,
+                    //                 "subject_id" => $request->subject_id
+                    //             ]);
+                    //         }
+                    //     } else {
+                    //         array_push($errors, trim($d));
+                    //     }
+                    // } catch (\Throwable $th) {
+                    //     array_push($errors, trim($d));
+                    // }
                 }
-                DB::commit();
+                // DB::commit();
 
-                return response()->json([
-                    'message' => 'File uploaded successfully!',
-                    "errors" => $errors
-                ], 200);
+                // return response()->json([
+                //     'message' => 'File uploaded successfully!',
+                //     "errors" => $errors
+                // ], 200);
             } catch (\Throwable $th) {
                 return response()->json(['message' => 'Server Error!'], 500);
             }
@@ -345,8 +346,8 @@ class GradeController extends Controller
             }
 
             return response($output, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="student_report.pdf"');
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="student_report.pdf"');
         }
 
         return response()->json([
