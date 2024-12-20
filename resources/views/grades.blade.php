@@ -115,9 +115,9 @@
                             <thead>
                                 <tr>
                                     <th class="th-sm">Name</th>
-                                    <th style="text-align: center">First Semester</th>
-                                    <th style="text-align: center">Second Semester</th>
-                                    <th style="text-align: center">Final Grade</th>
+                                    <th style="text-align: center">Midterm</th>
+                                    <th style="text-align: center">Final</th>
+                                    <th style="text-align: center">Average</th>
                                     <th style="text-align: center">Remark</th>
                                     <th style="text-align: center">Status</th>
                                     <th style="text-align: center; width: 15%!important" class="th-sm w-25"
@@ -127,11 +127,9 @@
                             <tbody>
                                 @foreach ($data as $d)
                                     @php
-                                        if ($d->midterm && $d->finals) {
+                                        if ($d->midterm && $d->final) {
                                             $average =
-                                                ($d->midterm + $d->finals) / 2
-                                                    ? ($d->midterm + $d->finals) / 2
-                                                    : 'N/A';
+                                                ($d->midterm + $d->final) / 2 ? ($d->midterm + $d->final) / 2 : 'N/A';
                                         } else {
                                             $average = 'N/A';
                                         }
@@ -139,10 +137,10 @@
                                     <tr>
                                         <td>{{ $d->name }}</td>
                                         <td style="text-align: center">{{ $d->midterm ? $d->midterm : 'N/A' }}</td>
-                                        <td style="text-align: center">{{ $d->finals ? $d->finals : 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $d->final ? $d->final : 'N/A' }}</td>
                                         <td style="text-align: center">{{ $average }}</td>
                                         <td style="text-align: center">
-                                            @if (!$d->midterm || !$d->finals)
+                                            @if (!$d->midterm || !$d->final)
                                                 <b class="remark no_grade">NO GRADE</b>
                                             @else
                                                 @if ($average == 'N/A')
@@ -157,14 +155,15 @@
                                         <td style="text-align: center">{{ $d->status }}</td>
                                         <td style="text-align: center">
                                             <a href="#updateStudent" class="btn btn-sm btn-flat btn-user-data"
-                                                data-id="{{ $d->student_id }}">
+                                                onclick="showUserData('{{ $d->student_id }}')">
                                                 <i class="fa fa-gear" style="color:  white !important"></i>
                                             </a>
-                                            <a class="btn btn-sm btn-flat btn-user-view" data-id="{{ $d->student_id }}">
+                                            <a class="btn btn-sm btn-flat btn-user-view"
+                                                onclick='showGRade("{{ $d->student_id }}")'>
                                                 <i class="fa fa-eye" style="color:  white !important"></i>
                                             </a>
                                             <a class="btn btn-sm btn-flat btn-danger delete"
-                                                data-id="{{ $d->id }}">
+                                                onclick="deleteF('{{ $d->id }}')">
                                                 <i class="fa fa-trash" style="color:  white !important"></i>
                                             </a>
                                         </td>
@@ -282,15 +281,17 @@
                             @error('midterm')
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
-                            <label for="midterm">First Semester:</label>
-                            <input name="midterm" maxlength="50" class="form-control" required id="midterm">
+                            <label for="midterm">Midterm:</label>
+                            <input type="text" name="midterm" maxlength="3" class="form-control" required
+                                id="midterm">
                         </div>
                         <div class="form-group has-feedback">
-                            @error('finals')
+                            @error('final')
                                 <span class="text-danger"> {{ $message }} </span>
                             @enderror
-                            <label for="finals">Second Semester:</label>
-                            <input name="finals" maxlength="50" class="form-control" required id="finals">
+                            <label for="final">Final:</label>
+                            <input type="text" name="final" maxlength="3" class="form-control" required
+                                id="final">
                         </div>
                         <input type="hidden" name="grade_id" id="grade_id">
                     </div>
@@ -495,111 +496,22 @@
                 })
             })
 
-            $('.delete').on('click', function() {
-                id = $(this).data('id')
-                $("#delete_id").val(id)
-                $('#deleteGrade').modal('show')
-            })
-
             $("#status").on("change", function(e) {
 
                 if ($(this).val() == "dropped") {
-                    $("#finals").attr('readonly', true);
+                    $("#final").attr('readonly', true);
                     $("#midterm").attr('readonly', true);
                 } else {
-                    $("#finals").attr('readonly', false);
+                    $("#final").attr('readonly', false);
                     $("#midterm").attr('readonly', false);
                 }
 
             })
 
-            $(".btn-user-view").on("click", function() {
-                id = $(this).data('id')
-                if (id) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('student.dataApi') }}",
-                        dataType: "json",
-                        data: {
-                            id: id,
-                            i_id: "{{ Auth::user()->id }}"
-                        },
-                        success: function(response) {
-                            $("#student-name").html(response.personal.name)
-                            $("#student-id").html(response.personal.student_id);
-                            $("#student-course").html(
-                                `<span class="fa fa-graduation-cap"></span > ${response.personal.course}`
-                            );
-                            $("#student-year-sec").html(
-                                `<span class="fa fa-book-open"></span> ${response.personal.year}-${response.personal.section}`
-                            )
-
-                            tr_data = ""
-                            response.grades.forEach(element => {
-                                let final_g = "No Grade"
-
-                                if (element.midterm && element.finals) {
-                                    final_g = (element.midterm + element.finals) / 2
-                                }
-                                tr_data += `
-                                <tr class="report-tr">
-                                    <td class="report-td" style="text-align: left">${element.subject_name}</td>
-                                    <td class="report-td">${element.midterm ? element.midterm : "No grade"}</td>
-                                    <td class="report-td">${element.finals ? element.finals : "No grade"}</td>
-                                    <td class="report-td">${final_g}</td>
-                                </tr>
-                             `
-                            });
-                            $("#grade-tbody").html(tr_data)
-                            $('#studentGrade').modal('show')
-                        }
-                    })
-                } else {
-                    swal({
-                        title: "Error",
-                        text: "Something went wrong!",
-                        icon: "error",
-                        button: "Close"
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                }
-
-            })
-
-            $(".btn-user-data").on("click", function() {
-
-                id = $(this).data('id')
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('grade.api') }}",
-                    dataType: "json",
-                    data: {
-                        id: id,
-                        s_id: "{{ $subject->id }}"
-                    },
-                    success: function(response) {
-                        $("#fullname").val(response.name)
-                        $("#midterm").val(response.midterm ? response.midterm : 0);
-                        $("#finals").val(response.finals ? response.finals : 0);
-                        $("#grade_id").val(response.id)
-                        $("#status").val(response.status)
-                        if (response.status == "dropped") {
-                            $("#finals").attr('readonly', true);
-                            $("#midterm").attr('readonly', true);
-                        } else {
-                            $("#finals").attr('readonly', false);
-                            $("#midterm").attr('readonly', false);
-                        }
-                        $('#updateStudent').modal('show')
-                    }
-                })
-            })
-
             $("#update_form").on("submit", (e) => {
                 e.preventDefault();
                 midterm = $("#midterm").val()
-                finals = $("#finals").val()
+                final = $("#final").val()
                 status = $("#status").val()
                 g_id = $("#grade_id").val()
                 fullname = $("#fullname").val()
@@ -613,7 +525,7 @@
                         grade_id: g_id,
                         status: status,
                         midterm: midterm,
-                        finals: finals
+                        final: final
                     },
                     success: function(response) {
                         swal({
@@ -657,6 +569,90 @@
                 }
             })
         })
+
+        function deleteF(id) {
+            $("#delete_id").val(id)
+            $('#deleteGrade').modal('show')
+        }
+
+        function showGRade(id) {
+            if (id) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('student.dataApi') }}",
+                    dataType: "json",
+                    data: {
+                        id: id,
+                        i_id: "{{ Auth::user()->id }}"
+                    },
+                    success: function(response) {
+                        $("#student-name").html(response.personal.name)
+                        $("#student-id").html(response.personal.student_id);
+                        $("#student-course").html(
+                            `<span class="fa fa-graduation-cap"></span > ${response.personal.course}`
+                        );
+                        $("#student-year-sec").html(
+                            `<span class="fa fa-book-open"></span> ${response.personal.year}-${response.personal.section}`
+                        )
+
+                        tr_data = ""
+                        response.grades.forEach(element => {
+                            let final_g = "No Grade"
+
+                            if (element.midterm && element.final) {
+                                final_g = (element.midterm + element.final) / 2
+                            }
+                            tr_data += `
+                                <tr class="report-tr">
+                                    <td class="report-td" style="text-align: left">${element.subject_name}</td>
+                                    <td class="report-td">${element.midterm ? element.midterm : "No grade"}</td>
+                                    <td class="report-td">${element.final ? element.final : "No grade"}</td>
+                                    <td class="report-td">${final_g}</td>
+                                </tr>
+                             `
+                        });
+                        $("#grade-tbody").html(tr_data)
+                        $('#studentGrade').modal('show')
+                    }
+                })
+            } else {
+                swal({
+                    title: "Error",
+                    text: "Something went wrong!",
+                    icon: "error",
+                    button: "Close"
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        }
+
+        function showUserData(id) {
+            $.ajax({
+                type: "GET",
+                url: "{{ route('grade.api') }}",
+                dataType: "json",
+                data: {
+                    id: id,
+                    s_id: "{{ $subject->id }}"
+                },
+                success: function(response) {
+                    $("#fullname").val(response.name)
+                    $("#midterm").val(response.midterm ? response.midterm : 0);
+                    $("#final").val(response.final ? response.final : 0);
+                    $("#grade_id").val(response.id)
+                    $("#status").val(response.status)
+                    if (response.status == "dropped") {
+                        $("#final").attr('readonly', true);
+                        $("#midterm").attr('readonly', true);
+                    } else {
+                        $("#final").attr('readonly', false);
+                        $("#midterm").attr('readonly', false);
+                    }
+                    $('#updateStudent').modal('show')
+                }
+            })
+        }
 
         function changeUploadicon() {
             $("#no_upload").css('display', 'none')
