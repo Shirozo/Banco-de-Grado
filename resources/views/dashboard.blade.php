@@ -75,7 +75,13 @@
                                         <td>{{ $sb->subject_name }}</td>
                                         <td style="text-align: center">{{ $sb->student_count }}</td>
                                         <td style="text-align: center">{{ $sb->school_year }}</td>
-                                        <td style="text-align: center">{{ $sb->semester }}</td>
+                                        @if ($sb->semester == 1)
+                                            <td style="text-align: center">1st Semester</td>
+                                        @elseif($sb->semester == 2)
+                                            <td style="text-align: center">2nd Semester</td>
+                                        @else
+                                            <td style="text-align: center"><S></S>ummer</td>
+                                        @endif
                                         <td style="text-align: center">
                                             <a href="{{ route('grade.show', ['id' => $sb->id]) }}"
                                                 class="btn btn-success btn-sm btn-flat">View</a>
@@ -122,8 +128,9 @@
                             <select name="sem" class="form-control" required="" id="sem"
                                 placeholder="Select Semester">
                                 <option value="" selected>--------</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
+                                <option value="1">1st Semester</option>
+                                <option value="2">2nd Semester</option>
+                                <option value="3">Summer </option>
                             </select>
                         </div>
                         <div class="form-group has-feedback">
@@ -178,8 +185,9 @@
                             <select name="edit_sem" class="form-control" required="" id="edit_sem"
                                 placeholder="Select Semester">
                                 <option value="" selected>--------</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
+                                <option value="1">1st Semester</option>
+                                <option value="2">2nd Semester</option>
+                                <option value="3">Summer </option>
                             </select>
                         </div>
                         <div class="form-group has-feedback">
