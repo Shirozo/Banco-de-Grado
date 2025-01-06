@@ -173,7 +173,7 @@
         $("#search-for-student").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $.ajax({
-                url: "{{ route('student.api') }}",
+                url: "{{ route('student.apiNav') }}",
                 type: "GET",
                 data: {
                     q: value
