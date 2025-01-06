@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -231,6 +232,37 @@ class StudentController extends Controller
         }
 
         $datas = Student::search($term)->limit(3)->get();
+
+        $formatted_data = [];
+
+        foreach ($datas as $data) {
+            $formatted_data[] = [
+                "id" => $data->id,
+                "text" => $data->name
+            ];
+        }
+
+        return response()->json($formatted_data);
+    }
+
+    public function apiNav(Request $request)
+    {
+        $term = trim($request->q);
+
+        if (empty($term)) {
+            return response()->json([]);
+        }
+
+        $datas = Student::whereIn('id', function ($query) {
+            $query->select('student_id')
+                ->from('enrollments')
+                ->join('subjects', 'enrollments.subject_id', '=', 'subjects.id')
+                ->where('subjects.instructor_id', Auth::user()->id);
+            })
+            ->where('name', 'like', "%{$term}%")
+            ->distinct()
+            ->limit(3)
+            ->get();
 
         $formatted_data = [];
 
