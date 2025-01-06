@@ -15,7 +15,10 @@ class AuthenticatedSessionController extends Controller
     {
 
         if (Auth::user()) {
-            return redirect()->intended(route("subject.show"));
+            if (Auth::user()->user_type != "1") {
+                return redirect()->intended(route("subject.show"));
+            }
+            return redirect()->intended(route("user.show"));
         }
 
         return view("login");
