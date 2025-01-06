@@ -63,10 +63,11 @@
                                         <td style="text-align: center">{{ $s->section }}</td>
                                         <td>
                                             <a href="#updateStudent" class="btn btn-sm btn-flat btn-user-data"
-                                                data-id="{{ $s->id }}">
+                                                onclick="btnUserData('{{ $s->id }}')">
                                                 <i class="fa fa-pen" style="color:  white !important"></i>
                                             </a>
-                                            <a class="btn btn-sm btn-flat btn-danger delete" data-id="{{ $s->id }}">
+                                            <a class="btn btn-sm btn-flat btn-danger delete"
+                                                onclick="deleteModal('{{ $s->id }}')">
                                                 <i class="fa fa-trash" style="color:  white !important"></i>
                                             </a>
                                         </td>
@@ -368,28 +369,6 @@
 
             })
 
-            $(".btn-user-data").on("click", function(e) {
-                e.preventDefault()
-                id = $(this).data('id')
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('student.all') }}",
-                    dataType: "json",
-                    data: {
-                        id: id,
-                    },
-                    success: function(response) {
-                        $("#update_name").val(response.personal.name)
-                        $("#update_student_id").val(response.personal.student_id);
-                        $("#update_course").val(response.personal.course);
-                        $("#update_year").val(response.personal.year)
-                        $("#update_section").val(response.personal.section)
-                        $("#s_id").val(id)
-                        $('#updateStudent').modal('show')
-                    }
-                })
-            })
-
             $("#addModal").on("submit", function(e) {
                 e.preventDefault();
                 $.ajax({
@@ -424,12 +403,6 @@
                     }
 
                 })
-            })
-
-            $('.delete').on('click', function() {
-                id = $(this).data('id')
-                $("#delete_id").val(id)
-                $('#deleteGrade').modal('show')
             })
 
             $("#update_form").on("submit", (e) => {
@@ -475,6 +448,31 @@
                 })
             })
         })
+
+        function deleteModal(id) {
+            $("#delete_id").val(id)
+            $('#deleteGrade').modal('show')
+        }
+
+        function btnUserData(id) {
+            $.ajax({
+                type: "GET",
+                url: "{{ route('student.all') }}",
+                dataType: "json",
+                data: {
+                    id: id,
+                },
+                success: function(response) {
+                    $("#update_name").val(response.personal.name)
+                    $("#update_student_id").val(response.personal.student_id);
+                    $("#update_course").val(response.personal.course);
+                    $("#update_year").val(response.personal.year)
+                    $("#update_section").val(response.personal.section)
+                    $("#s_id").val(id)
+                    $('#updateStudent').modal('show')
+                }
+            })
+        }
 
         function changeUploadicon() {
             $("#no_upload").css('display', 'none')
