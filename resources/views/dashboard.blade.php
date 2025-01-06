@@ -80,7 +80,7 @@
                                         @elseif($sb->semester == 2)
                                             <td style="text-align: center">2nd Semester</td>
                                         @else
-                                            <td style="text-align: center"><S></S>ummer</td>
+                                            <td style="text-align: center">Summer</td>
                                         @endif
                                         <td style="text-align: center">
                                             <a href="{{ route('grade.show', ['id' => $sb->id]) }}"
