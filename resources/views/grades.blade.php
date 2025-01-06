@@ -218,7 +218,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">UPLOAD GRADESHEET</h5>
+                        <h5 class="modal-title">UPLOAD GRADE SHEET</h5>
                     </div>
                     <div class="modal-body">
                         <div id="form-div">
