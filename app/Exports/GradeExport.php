@@ -15,7 +15,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
-class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
+class GradeExport implements WithHeadings, WithDrawings, WithEvents
 {
     protected $id;
 
@@ -30,15 +30,6 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
             "First Sem",
             "Second Sem",
             "Average",
-        ];
-    }
-
-    public function map($student): array
-    {
-        return [
-            $student->midterm ? $student->midterm : "No Grade",
-            $student->final ? $student->final : "No Grade",
-            ($student->midterm + $student->final) / 2,
         ];
     }
 
@@ -81,7 +72,7 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
                 } else {
                     $sem = "Second Semester";
                 }
-                $sheet->setCellValue('A4', $sem . ', School Year' . $subject->school_year);
+                $sheet->setCellValue('A4', $sem . ', School Year ' . $subject->school_year);
                 $sheet->getStyle('A4')->getFont()->setBold(true)->setSize(12)->setName("Arial");
                 $sheet->getStyle('A4')->getAlignment()->setHorizontal('center')->setVertical('center');
                 $sheet->getRowDimension(1)->setRowHeight(30);
@@ -212,16 +203,23 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
                     $sheet->setCellValue("F" . ($startRow), $grade->s_id); // Student number
                     $sheet->setCellValue("G" . ($startRow), $grade->midterm == 0 ? "N/A" : $grade->midterm); // Midterm grade
                     $sheet->setCellValue("H" . ($startRow), $grade->final == 0 ? "N/A" : $grade->final); // Final grade
-                    $sheet->setCellValue("I" . ($startRow), ($grade->midterm + $grade->final) / 2 == 0 ? "N/A" : ($grade->midterm + $grade->final) / 2); // Average
-                    $av = ($grade->midterm + $grade->final) / 2;
-                    if ($grade->status == "dropped") {
-                        $sheet->setCellValue("J" . ($startRow), "DROPPED"); // Average
-                    } else if ($av <= 3 && $av >= 1 ) {
-                        $sheet->setCellValue("J" . ($startRow), "PASSED"); // Average
-                    } else if ($av > 3) {
-                        $sheet->setCellValue("J" . ($startRow), "FAILED"); // Average
-                    } else if ($grade->midterm == null || $grade->midterm == 0 || $grade->final == null || $grade->final == 0){
-                        $sheet->setCellValue("J" . ($startRow), "INC"); // Average
+                    if ($grade->midterm && $grade->midterm) {
+                        if ($grade->midterm == "INC" || $grade->final == "INC" || $grade->midterm == 0 || $grade->final == 0) {
+                            $sheet->setCellValue("I" . ($startRow), "INC");
+                            $sheet->setCellValue("J" . ($startRow), "INC"); // Average
+                        } else {
+                            $sheet->setCellValue("I" . ($startRow), ($grade->midterm + $grade->final) / 2 == 0 ? "N/A" : ($grade->midterm + $grade->final) / 2); // Average
+                            $av = ($grade->midterm + $grade->final) / 2;
+                            if ($grade->status == "dropped") {
+                                $sheet->setCellValue("J" . ($startRow), "DROPPED");
+                            } else if ($av <= 3 && $av >= 1) {
+                                $sheet->setCellValue("J" . ($startRow), "PASSED");
+                            } else if ($av > 3 && $av <= 3.5) {
+                                $sheet->setCellValue("J" . ($startRow), "CONDITIONAL");
+                            } else if ($av > 3.5 && $av <= 5) {
+                                $sheet->setCellValue("J" . ($startRow), "FAILED");
+                            }
+                        }
                     }
                     $sheet->getStyle('A' . $startRow . ":J" . $startRow)->getFont()->setBold(false)->setSize(11)->setName("Arial Narrow");
                     $sheet->getStyle('A' . $startRow . ":J" . $startRow)->getAlignment()->setHorizontal('center')->setVertical('center');
@@ -249,7 +247,7 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
                 $sheet->mergeCells($col_ro4);
                 $sheet->setCellValue("H" . ($startRow), "Receieved:");
                 $sheet->getStyle('H' . $startRow)->getFont()->setBold(false)->setSize(10)->setName("Arial Narrow");
-                
+
                 $startRow += 2;
                 $col_ro1 = "A" . $startRow . ":C" . $startRow;
                 $sheet->mergeCells($col_ro1);
@@ -299,7 +297,7 @@ class GradeExport implements WithHeadings, WithMapping, WithDrawings, WithEvents
                 $sheet->mergeCells($col_ro5);
                 $sheet->setCellValue("A" . ($startRow), "                                                                           ");
                 $sheet->getStyle('A' . $startRow)->getFont()->setBold(true)->setSize(10)->setName("Arial Narrow")->setUnderline(true);
-                
+
                 $startRow += 1;
                 $col_ro6 = "A" . $startRow . ":D" . $startRow;
                 $sheet->mergeCells($col_ro6);
