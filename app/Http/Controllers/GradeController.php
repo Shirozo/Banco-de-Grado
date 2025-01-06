@@ -281,35 +281,36 @@ class GradeController extends Controller
                 $errors = [];
 
                 foreach ($data as $d) {
-                    dump($d);
-                    // try {
-                    //     $student =  Student::where("student_id", "=", trim($d))->first();
+                    $exploded = explode(",", trim($d));
+                    try {
+                        $student =  Student::where("student_id", "=", trim($exploded[0]))->first();
+                        if ($student != null) {
+                            $has_data = Grade::where([
+                                ["student_id", "=", $student->id],
+                                ["subject_id", "=", $request->subject_id]
+                            ])->first();
 
-                    //     if ($student != null) {
-                    //         $has_data = Grade::where([
-                    //             ["student_id", "=", $student->id],
-                    //             ["subject_id", "=", $request->subject_id]
-                    //         ])->first();
-
-                    //         if ($has_data == null) {
-                    //             Grade::create([
-                    //                 "student_id" => $student->id,
-                    //                 "subject_id" => $request->subject_id
-                    //             ]);
-                    //         }
-                    //     } else {
-                    //         array_push($errors, trim($d));
-                    //     }
-                    // } catch (\Throwable $th) {
-                    //     array_push($errors, trim($d));
-                    // }
+                            if ($has_data == null) {
+                                Grade::create([
+                                    "student_id" => $student->id,
+                                    "subject_id" => $request->subject_id,
+                                    "midterm" => trim($exploded[1]),
+                                    "final" => trim($exploded[2])
+                                ]);
+                            }
+                        } else {
+                            array_push($errors, trim($exploded[0]));
+                        }
+                    } catch (\Throwable $th) {
+                        array_push($errors, trim($exploded[0]));
+                    }
                 }
-                // DB::commit();
+                DB::commit();
 
-                // return response()->json([
-                //     'message' => 'File uploaded successfully!',
-                //     "errors" => $errors
-                // ], 200);
+                return response()->json([
+                    'message' => 'File uploaded successfully!',
+                    "errors" => $errors
+                ], 200);
             } catch (\Throwable $th) {
                 return response()->json(['message' => 'Server Error!'], 500);
             }
