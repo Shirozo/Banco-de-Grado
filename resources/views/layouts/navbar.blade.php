@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="nav-action">
-            <i class="fa fa-user fa-lg" id="user-icon"></i>
+            <i class="fa fa-user fa-lg" id="user-icon"> {{ Auth::user()->username }}</i>
             <div class="search-result s-inactive" id="user-nav-action">
                 <a href="{{ route('logout') }}">Log Out</a>
             </div>

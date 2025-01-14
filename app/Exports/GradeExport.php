@@ -201,24 +201,22 @@ class GradeExport implements WithHeadings, WithDrawings, WithEvents
                     $sheet->mergeCells($col_ro);
 
                     $sheet->setCellValue("F" . ($startRow), $grade->s_id); // Student number
-                    $sheet->setCellValue("G" . ($startRow), $grade->midterm == 0 ? "N/A" : $grade->midterm); // Midterm grade
-                    $sheet->setCellValue("H" . ($startRow), $grade->final == 0 ? "N/A" : $grade->final); // Final grade
-                    if ($grade->midterm && $grade->midterm) {
-                        if ($grade->midterm == "INC" || $grade->final == "INC" || $grade->midterm == 0 || $grade->final == 0) {
-                            $sheet->setCellValue("I" . ($startRow), "INC");
-                            $sheet->setCellValue("J" . ($startRow), "INC"); // Average
-                        } else {
-                            $sheet->setCellValue("I" . ($startRow), ($grade->midterm + $grade->final) / 2 == 0 ? "N/A" : ($grade->midterm + $grade->final) / 2); // Average
-                            $av = ($grade->midterm + $grade->final) / 2;
-                            if ($grade->status == "dropped") {
-                                $sheet->setCellValue("J" . ($startRow), "DROPPED");
-                            } else if ($av <= 3 && $av >= 1) {
-                                $sheet->setCellValue("J" . ($startRow), "PASSED");
-                            } else if ($av > 3 && $av <= 3.5) {
-                                $sheet->setCellValue("J" . ($startRow), "CONDITIONAL");
-                            } else if ($av > 3.5 && $av <= 5) {
-                                $sheet->setCellValue("J" . ($startRow), "FAILED");
-                            }
+                    $sheet->setCellValue("G" . ($startRow), $grade->midterm ? $grade->midterm : "INC"); // Midterm grade
+                    $sheet->setCellValue("H" . ($startRow), $grade->final ? $grade->final : "INC"); // Final grade
+                    if (!$grade->midterm || !$grade->final || $grade->midterm == "INC" || $grade->final == "INC" || $grade->midterm == 0 || $grade->final == 0) {
+                        $sheet->setCellValue("I" . ($startRow), "INC");
+                        $sheet->setCellValue("J" . ($startRow), "INC"); // Average
+                    } else {
+                        $sheet->setCellValue("I" . ($startRow), ($grade->midterm + $grade->final) / 2 == 0 ? "N/A" : ($grade->midterm + $grade->final) / 2); // Average
+                        $av = ($grade->midterm + $grade->final) / 2;
+                        if ($grade->status == "dropped") {
+                            $sheet->setCellValue("J" . ($startRow), "DROPPED");
+                        } else if ($av <= 3 && $av >= 1) {
+                            $sheet->setCellValue("J" . ($startRow), "PASSED");
+                        } else if ($av > 3 && $av <= 3.5) {
+                            $sheet->setCellValue("J" . ($startRow), "CONDITIONAL");
+                        } else if ($av > 3.5 && $av <= 5) {
+                            $sheet->setCellValue("J" . ($startRow), "FAILED");
                         }
                     }
                     $sheet->getStyle('A' . $startRow . ":J" . $startRow)->getFont()->setBold(false)->setSize(11)->setName("Arial Narrow");

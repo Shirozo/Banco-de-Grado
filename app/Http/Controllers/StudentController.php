@@ -253,13 +253,7 @@ class StudentController extends Controller
             return response()->json([]);
         }
 
-        $datas = Student::whereIn('id', function ($query) {
-            $query->select('student_id')
-                ->from('enrollments')
-                ->join('subjects', 'enrollments.subject_id', '=', 'subjects.id')
-                ->where('subjects.instructor_id', Auth::user()->id);
-            })
-            ->where('name', 'like', "%{$term}%")
+        $datas = Student::search($term)
             ->distinct()
             ->limit(3)
             ->get();

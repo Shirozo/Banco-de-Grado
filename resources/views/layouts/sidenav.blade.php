@@ -12,12 +12,6 @@
                 <!-- Nav items -->
                 <ul class="navbar-nav" style="margin-top: 60px;">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('subject.show') }}">
-                            <i class="fa fa-gauge"></i>
-                            <span class="nav-link-text">Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('student.show') }}">
                             <i class="fa fa-graduation-cap"></i>
                             <span class="nav-link-text">Students</span>
