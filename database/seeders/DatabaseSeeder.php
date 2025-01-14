@@ -22,13 +22,5 @@ class DatabaseSeeder extends Seeder
             'password' => "admin",
             "user_type" => 1
         ]);
-
-        Student::create([
-            'name' => 'Test Data',
-            "student_id" => "22-12345",
-            "course" => "computer science",
-            "year" => 1,
-            "section" => "A"
-        ]);
     }
 }
