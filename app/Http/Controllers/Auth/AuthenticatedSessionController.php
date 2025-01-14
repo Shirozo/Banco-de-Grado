@@ -34,9 +34,7 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerate();
 
-            return response()->json([
-                "message" => "valid!"
-            ], 200);
+            return redirect()->intended(route("user.show"));
         } catch (\Throwable $th) {
             return response()->json([
                 "message" => "Invalid!"
