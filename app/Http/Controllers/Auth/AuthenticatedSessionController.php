@@ -34,7 +34,11 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerate();
 
+            if (Auth::user()->user_type != "1") {
+                return redirect()->intended(route("subject.show"));
+            }
             return redirect()->intended(route("user.show"));
+
         } catch (\Throwable $th) {
             return response()->json([
                 "message" => "Invalid!"
