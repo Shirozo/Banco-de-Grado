@@ -1,7 +1,4 @@
-@import "@fortawesome/fontawesome-free/css/all.css";
-@import url("../../public/assets/css/bootstrap.css");
-@import url("../../public/assets/css/dataTables.min.css");
-@import url("../../public/assets/css/select2.min.css");
+@import url("../../public/vendor/fontawesome-free-5.15.4-web/css/all.css");
 
 @font-face {
     font-family: "Kadwa";
