@@ -41,14 +41,36 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome-free-5.15.4-web/css/all.css') }}">
 
+    <style>
+        @font-face {
+            font-family: "Kadwa";
+            src: url("{{ asset('assets/fonts/Kadwa-Regular.ttf') }}");
+        }
 
+        @font-face {
+            font-family: "Kanit";
+            src: url("{{ asset('assets/fonts/Kanit-Regular.ttf') }}");
+        }
+
+        @font-face {
+            font-family: "Kanit-Thin";
+            src: url("{{ asset('assets/fonts/Kanit-Thin.ttf') }}");
+        }
+
+        a {
+            text-decoration: none;
+            color: #464646;
+        }
+
+    </style>
 </head>
 
 <body class="" style="background-color: #F4F2FF">
 
     @if (Auth::user()->user_type == 1)
-        @include('layouts.sidenav')
+    @include('layouts.sidenav')
     @endif
 
     <div class="main-content" id="panel">
